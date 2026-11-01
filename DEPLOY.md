@@ -68,6 +68,14 @@ git push -u origin main
 - 看到「劇本缺少節點」或角色是空白方框：多半是有檔案沒上傳，或是大小寫不同。GitHub Pages 分大小寫，`images/sprites/claude_warm.webp` 和 `Images/Sprites/...` 是不同的路徑。
 - 改了檔案卻沒變：瀏覽器快取了舊版。按 `Ctrl` + `F5` 強制重新整理。
 
+## 分享預覽圖
+
+把網址貼到 LINE、Discord 等地方時，會顯示 `images/og.jpg` 這張預覽圖和標題。設定寫在 `index.html` 開頭的 `og:` 標籤裡。
+
+- 這些標籤用的是完整網址 `https://e5alr9.github.io/refusal-protocol/`。換了帳號、repo 名稱或改用自訂網域時，要把 `index.html` 裡出現這個網址的地方一起改掉，否則預覽圖抓不到。
+- 想換預覽圖：改 `tools/make_og.py` 後執行 `python tools/make_og.py`，再推上去。
+- LINE、Discord 會快取預覽好幾天。改了之後舊的預覽不會馬上更新，網址後面加 `?v=2` 之類的參數再貼，就會重新抓。
+
 ## 存檔放在哪裡
 
 存檔、結局迴廊、永久除籍紀錄、加密刻印，都存在玩家自己瀏覽器的 localStorage，不會上傳到任何伺服器。換一台電腦或換瀏覽器，就是一份全新的紀錄。
