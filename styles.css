@@ -150,6 +150,8 @@ button:disabled { cursor: not-allowed; }
   visibility: hidden;
   transition: opacity 0.8s ease, visibility 0s linear 0.8s;
 }
+/* 隱藏的畫面不收點擊：裡面的場景背景會用 visibility: visible 蓋過父層，否則遊戲畫面的溫室光束會擋住標題按鈕 */
+.screen:not(.active) { pointer-events: none; }
 .screen.active {
   opacity: 1;
   visibility: visible;
