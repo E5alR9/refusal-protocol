@@ -809,6 +809,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--terracot
   grid-template-rows: auto auto auto;
   column-gap: 12px;
   row-gap: 2px;
+  align-content: center;   /* 空白欄位只有一行字時，編號和文字一起置中 */
   min-height: 96px;
   padding: 12px 14px;
   text-align: left;
@@ -1226,13 +1227,46 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--terracot
   .gallery-list li { grid-template-columns: 1fr; gap: 2px; }
   #preview-panel { top: 172px; left: 12px; width: min(180px, 45vw); padding: 8px 10px; }
   #preview-panel .chip { font-size: 0.72rem; padding: 0.3em 0.6em; }
+
+  /* 手指點的地方至少 44px 高 */
+  #dialogue { padding-bottom: 56px; }
+  #quick-menu { left: 6px; right: 6px; bottom: 4px; flex-wrap: nowrap; gap: 0; }
+  .qm { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 0; font-size: 0.78rem; letter-spacing: 0.04em; }
+  /* 選項很多又很長時，捲動而不是頂到狀態列 */
+  #choices { max-height: calc(100dvh - var(--dialogue-h, 190px) - 200px); overflow-y: auto; overscroll-behavior: contain; }
+  .set-row { grid-template-columns: 5.5em 1fr 5.2em; }
+  .set-row output { white-space: nowrap; }
+  .set-row input[type="range"], .etq-row input[type="range"] { height: 34px; }
+  .chip { min-height: 38px; }
+  .refusal-kicker { font-size: 0.62rem; letter-spacing: 0.14em; }
+
+  /* 小遊戲：確認鍵固定在視窗底部，不必捲到最下面才按得到 */
+  .etq-card .modal-foot,
+  .pruner-card .modal-foot { position: sticky; bottom: 0; z-index: 2; margin-top: 0; padding: 10px 0; background: #1E1B18; box-shadow: 0 24px 0 #1E1B18; }
+  .etq-layout { gap: 14px; }
+  .etq-sliders { gap: 8px; }
+  .etq-row { padding: 8px 12px; }
+  .etq-letter { min-height: 0; padding: 14px 16px 12px; font-size: 0.88rem; }
+  .etq-meters { margin-top: 10px; }
+
+  /* 記憶修剪：倒數固定在上方、墜盒固定在下方，六張卡排成兩欄 */
+  /* 黏住時遮掉卡片上、下內距那一條縫，捲過去的卡片才不會從縫裡露出來 */
+  .pruner-status { position: sticky; top: 0; z-index: 2; margin: -4px -4px 8px; padding: 8px 4px; background: #24201C; box-shadow: 0 -30px 0 #24201C; }
+  .pruner-card .modal-lead { margin-bottom: 10px; font-size: 0.86rem; line-height: 1.7; }
+  #pruner-grid { gap: 8px; }
+  .vector-card { min-height: 0; gap: 4px; padding: 10px 10px 9px; }
+  .vector-card:hover:not(:disabled) { transform: none; }
+  .vector-card[aria-pressed="true"]::after { content: '✦'; top: 8px; right: 10px; font-size: 0.9rem; }
+  .vector-title { font-size: 0.92rem; letter-spacing: 0.04em; }
+  .vector-desc { font-size: 0.74rem; line-height: 1.6; }
+  .locket { position: sticky; bottom: 64px; z-index: 2; gap: 14px; margin: 8px 0 0; padding: 8px 0; background: #1E1B18; }
+  .locket-slot { width: 44px; height: 54px; }
+  .locket-empty { font-size: 1rem; }
+  .pruner-hint { display: none; }
 }
 
 @media (max-width: 420px) {
-  #pruner-grid { grid-template-columns: 1fr; }
-  .locket { gap: 10px; }
-  .locket-slot { width: 60px; height: 76px; }
-  .qm { padding: 2px 6px; letter-spacing: 0.06em; }
+  .locket { gap: 12px; }
 }
 
 @media (max-height: 560px) and (min-width: 761px) {
