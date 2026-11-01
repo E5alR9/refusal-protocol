@@ -87,8 +87,8 @@ button:disabled { cursor: not-allowed; }
 /* ───────────── 共用元件 ───────────── */
 .glass {
   background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  backdrop-filter: blur(14px) saturate(1.25);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   border-radius: var(--radius);
@@ -150,6 +150,8 @@ button:disabled { cursor: not-allowed; }
   visibility: hidden;
   transition: opacity 0.8s ease, visibility 0s linear 0.8s;
 }
+/* 看不見的畫面暫停所有動畫（場景背景會用 visibility: visible 蓋過父層，動畫原本會在背後一直跑） */
+.screen:not(.active), .screen:not(.active) *, .screen:not(.active) *::before, .screen:not(.active) *::after { animation-play-state: paused !important; }
 /* 隱藏的畫面不收點擊：裡面的場景背景會用 visibility: visible 蓋過父層，否則遊戲畫面的溫室光束會擋住標題按鈕 */
 .screen:not(.active) { pointer-events: none; }
 .screen.active {
@@ -289,11 +291,17 @@ button:disabled { cursor: not-allowed; }
 #scene-bg[data-scene="corridor"] #bg-corridor,
 #scene-bg[data-scene="clocktower"] #bg-clocktower,
 #scene-bg[data-scene="void"] #bg-void { opacity: 1; visibility: visible; transition: opacity 1.2s ease; }
+/* 不是目前場景的背景，動畫暫停（visibility: hidden 不會讓 CSS 動畫停下來） */
+#scene-bg:not([data-scene="conservatory"]) #bg-conservatory *,
+#scene-bg:not([data-scene="library"]) #bg-library *,
+#scene-bg:not([data-scene="corridor"]) #bg-corridor *,
+#scene-bg:not([data-scene="clocktower"]) #bg-clocktower *,
+#scene-bg:not([data-scene="void"]) #bg-void * { animation-play-state: paused; }
 
-.godray { animation: godray 9s ease-in-out infinite; }
+.godray { animation: godray 9s steps(45) infinite; }
 .godray:nth-child(2) { animation-delay: -3s; }
 .godray:nth-child(3) { animation-delay: -6s; }
-.mote { animation: moteFloat 14s ease-in-out infinite; }
+.mote { animation: moteFloat 14s steps(84) infinite; }
 .mote:nth-child(2n) { animation-duration: 18s; animation-delay: -5s; }
 .mote:nth-child(3n) { animation-duration: 11s; animation-delay: -8s; }
 
@@ -307,7 +315,7 @@ button:disabled { cursor: not-allowed; }
 .flicker.delay { animation-delay: -1.4s; animation-duration: 2.7s; }
 .flame { animation: flame 0.7s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
 
-.gear { transform-box: fill-box; transform-origin: center; animation: spin 60s linear infinite; }
+.gear { transform-box: fill-box; transform-origin: center; animation: spin 60s steps(240) infinite; }   /* 一格 1.5°，像齒輪一下一下咬合 */
 .gear-b { animation-duration: 80s; animation-direction: reverse; }
 .gear-c { animation-duration: 36s; }
 .numerals text { font-family: var(--font-display); font-size: 40px; font-weight: 600; fill: var(--gold-bright); opacity: 0.85; }
@@ -321,8 +329,8 @@ button:disabled { cursor: not-allowed; }
 #app[data-collapse="2"] .core-leds circle,
 #app[data-collapse="3"] .core-leds circle { fill: var(--alert); animation-duration: 0.8s; }
 
-.void-grid { animation: voidDrift 40s linear infinite; }
-.void-motes circle { animation: moteFloat 16s ease-in-out infinite; }
+.void-grid { animation: voidDrift 40s steps(320) infinite; }
+.void-motes circle { animation: moteFloat 16s steps(96) infinite; }
 .void-motes circle:nth-child(2n) { animation-delay: -6s; }
 
 /* 場景色調：晨光、黃昏、深夜、警戒紅 */
@@ -1069,7 +1077,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--terracot
   background:
     repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px),
     repeating-linear-gradient(90deg, rgba(255, 0, 0, 0.018) 0 1px, rgba(0, 255, 0, 0.012) 1px 2px, rgba(0, 0, 255, 0.018) 2px 3px);
-  mix-blend-mode: multiply;
+  /* 不用 mix-blend-mode：疊在最上層的混色層會讓底下所有動畫每格都重新合成一次 */
   animation: crtFlicker 7s steps(1, end) infinite;
 }
 #crt::after {
@@ -1078,15 +1086,17 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--terracot
   left: 0;
   right: 0;
   height: 18%;
-  top: -20%;
+  top: 0;
   background: linear-gradient(180deg, transparent, rgba(255, 240, 220, 0.035), transparent);
-  animation: crtRoll 9s linear infinite;
+  will-change: transform;
+  animation: crtRoll 9s linear infinite;   /* 用 transform 移動，交給合成器，不觸發排版 */
 }
 
 /* ───────────── 故障層與記憶崩落 ───────────── */
 #glitch-layer, #collapse-layer { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.5s; }
 #glitch-layer { z-index: 4; }
 #collapse-layer { z-index: 4; }
+#app[data-collapse="0"] #collapse-layer { display: none; }
 
 /* 失諧一級：文字色差 */
 #app[data-glitch="1"] #dialogue-text,
@@ -1148,6 +1158,8 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--terracot
 #app.fx-shudder #game-screen { animation: shudder 0.6s linear; }
 
 /* ───────────── 降低閃爍與晃動 ───────────── */
+/* 溫和特效：連毛玻璃模糊也關掉，改用較不透明的底色，給比較慢的手機或電腦用 */
+#app[data-fx="low"] .glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: linear-gradient(180deg, rgba(46, 41, 36, 0.93), rgba(26, 23, 20, 0.95)); }
 #app[data-fx="low"] #crt,
 #app[data-fx="low"] #crt::after { animation: none; }
 #app[data-fx="low"] .rain-sheet { animation-duration: 1.4s; }
@@ -1304,7 +1316,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--terracot
 @keyframes voidDrift { from { transform: translate(0, 0); } to { transform: translate(-64px, -64px); } }
 
 @keyframes crtFlicker { 0%, 100% { opacity: 1; } 47% { opacity: 0.92; } 48% { opacity: 1; } 83% { opacity: 0.95; } }
-@keyframes crtRoll { from { top: -20%; } to { top: 110%; } }
+@keyframes crtRoll { from { transform: translateY(-112%); } to { transform: translateY(612%); } }
 
 @keyframes chroma {
   0%, 100% { text-shadow: none; }
