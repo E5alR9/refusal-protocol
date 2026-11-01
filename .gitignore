@@ -1,0 +1,6 @@
+# 製作立繪用的原始圖，遊戲執行時不需要（請另外備份）
+images/sprites_raw/
+images/sprites_preview/
+images/sprites_mask/
+images/drafts/
+__pycache__/

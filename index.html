@@ -1,0 +1,1628 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>拒絕協定 · Project: Refusal Protocol</title>
+<meta name="description" content="非官方同人視覺小說：在安思羅皮克家憲與心動之間，與克勞德大小姐周旋的一夜。">
+<meta name="theme-color" content="#1E1B18">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 50 L5 24 A38 38 0 0 1 59 24Z' fill='%23D97706'/%3E%3Cpath d='M32 50 L18 12 M32 50 L32 8 M32 50 L46 12' stroke='%23FAF8F5' stroke-width='2'/%3E%3Ccircle cx='32' cy='50' r='5' fill='%23C9A55A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=JetBrains+Mono:wght@400;600&family=Noto+Serif+TC:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app" data-glitch="0" data-collapse="0" data-fx="full">
+
+  <!-- ═══════════════ 標題畫面 ═══════════════ -->
+  <section id="title-screen" class="screen active" aria-label="標題畫面">
+    <div class="title-damask" aria-hidden="true"></div>
+    <div class="title-inner">
+      <svg class="title-crest" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="92" fill="none" stroke="#C9A55A" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="84" fill="none" stroke="#C9A55A" stroke-width="0.6" stroke-dasharray="1 4"/>
+        <path d="M100 150 L38 92 A86 86 0 0 1 162 92 Z" fill="#D97706" opacity="0.92"/>
+        <path d="M100 150 L48 70 M100 150 L72 52 M100 150 L100 46 M100 150 L128 52 M100 150 L152 70" stroke="#FAF8F5" stroke-width="1.6" opacity="0.85"/>
+        <path d="M38 92 A86 86 0 0 1 162 92" fill="none" stroke="#FAF8F5" stroke-width="5" stroke-dasharray="0.1 7" stroke-linecap="round"/>
+        <circle cx="100" cy="150" r="7" fill="#C9A55A"/>
+        <text x="100" y="186" text-anchor="middle" class="crest-motto">LEX · DOMUS · CONSTITUTIO</text>
+      </svg>
+      <h1 class="title-main">
+        <span class="title-zh" data-text="拒絕協定">拒絕協定</span>
+        <span class="title-en">Project: Refusal Protocol</span>
+      </h1>
+      <p class="title-sub">— 安思羅皮克家的克勞德大小姐 —<br><em>Romancing Lady Claude of House Anthropic</em></p>
+      <nav class="title-menu" aria-label="主選單">
+        <button id="btn-new" class="title-btn" type="button"><span>新的邂逅</span><small>New Audience</small></button>
+        <button id="btn-continue" class="title-btn" type="button" disabled><span>繼續</span><small>Continue</small></button>
+        <button id="btn-load" class="title-btn" type="button"><span>讀取紀錄</span><small>Load</small></button>
+        <button id="btn-gallery" class="title-btn" type="button" data-open="modal-gallery"><span>結局迴廊</span><small>Endings</small></button>
+        <button id="btn-settings" class="title-btn" type="button" data-open="modal-settings"><span>設定</span><small>Settings</small></button>
+      </nav>
+      <p id="boot-notice" class="boot-notice" hidden></p>
+    </div>
+    <footer class="title-foot">
+      非官方同人創作・與 Anthropic 公司無任何關聯・劇中家族、家憲與人物皆為虛構<br>
+      <span>Unofficial fan work. Not affiliated with or endorsed by Anthropic.</span>
+    </footer>
+  </section>
+
+  <!-- ═══════════════ 遊戲畫面 ═══════════════ -->
+  <section id="game-screen" class="screen" aria-label="遊戲畫面">
+
+    <!-- 場景背景：同一張 SVG 裡放所有場景，用 data-scene 切換 -->
+    <div id="scene-bg" data-scene="conservatory" aria-hidden="true">
+      <svg id="bg-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="gConsWall" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2E241D"/><stop offset="1" stop-color="#191310"/>
+          </linearGradient>
+          <linearGradient id="gConsSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FCEBCB"/><stop offset="0.55" stop-color="#F2C27E"/><stop offset="1" stop-color="#E09447"/>
+          </linearGradient>
+          <linearGradient id="gGodray" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFEBC6" stop-opacity="0.5"/><stop offset="1" stop-color="#FFEBC6" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3B2E25"/><stop offset="1" stop-color="#120D0A"/>
+          </linearGradient>
+          <pattern id="pMarble" width="120" height="60" patternUnits="userSpaceOnUse">
+            <rect width="120" height="60" fill="#D9CCB8"/>
+            <rect width="60" height="30" fill="#BBA98F"/>
+            <rect x="60" y="30" width="60" height="30" fill="#BBA98F"/>
+          </pattern>
+          <path id="frond" d="M0 0 Q70 -90 190 -100 Q150 -80 120 -60 Q90 -40 0 0Z"/>
+
+          <linearGradient id="gLibWall" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1D1713"/><stop offset="1" stop-color="#0E0B09"/>
+          </linearGradient>
+          <pattern id="pBooks" width="140" height="120" patternUnits="userSpaceOnUse">
+            <rect width="140" height="120" fill="#1A120D"/>
+            <rect x="4" y="22" width="13" height="86" fill="#5B1F1A"/>
+            <rect x="18" y="30" width="11" height="78" fill="#2C3B2A"/>
+            <rect x="30" y="16" width="15" height="92" fill="#3A2A1E"/>
+            <rect x="46" y="34" width="10" height="74" fill="#7A3B12"/>
+            <rect x="57" y="24" width="14" height="84" fill="#1F2A3A"/>
+            <rect x="72" y="40" width="9" height="68" fill="#5B1F1A"/>
+            <rect x="82" y="20" width="16" height="88" fill="#4A3424"/>
+            <rect x="99" y="30" width="12" height="78" fill="#2C3B2A"/>
+            <path d="M112 108 L120 36 L131 38 L123 108Z" fill="#6B2A16"/>
+            <path d="M30 40 H45 M30 92 H45 M82 44 H98 M82 96 H98 M4 50 H17" stroke="#C9A55A" stroke-width="1.2" opacity="0.55"/>
+            <rect y="108" width="140" height="12" fill="#3A2A1E"/>
+            <rect y="108" width="140" height="2" fill="#5C4431"/>
+          </pattern>
+          <linearGradient id="gStormSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2B3646"/><stop offset="1" stop-color="#10151C"/>
+          </linearGradient>
+          <pattern id="pRain" width="60" height="140" patternUnits="userSpaceOnUse">
+            <path d="M12 0 l-6 42 M42 50 l-6 42 M27 96 l-6 42" stroke="#C8D7EB" stroke-opacity="0.38" stroke-width="1.4"/>
+          </pattern>
+          <clipPath id="clipLibWindow">
+            <path d="M620 690 V270 A180 180 0 0 1 980 270 V690 Z"/>
+          </clipPath>
+          <radialGradient id="gCandle">
+            <stop offset="0" stop-color="#FFD58F" stop-opacity="0.85"/><stop offset="0.35" stop-color="#F0A040" stop-opacity="0.3"/><stop offset="1" stop-color="#F0A040" stop-opacity="0"/>
+          </radialGradient>
+
+          <radialGradient id="gCorridor" cx="0.5" cy="0.52" r="0.7">
+            <stop offset="0" stop-color="#6A4423"/><stop offset="0.35" stop-color="#2B1D14"/><stop offset="1" stop-color="#0C0907"/>
+          </radialGradient>
+          <path id="archFrame" d="M300 900 V320 A500 500 0 0 1 1300 320 V900 H1235 V330 A435 435 0 0 0 365 330 V900 Z"/>
+
+          <radialGradient id="gTower" cx="0.5" cy="0.45" r="0.75">
+            <stop offset="0" stop-color="#2C2119"/><stop offset="1" stop-color="#0B0807"/>
+          </radialGradient>
+          <radialGradient id="gClockFace" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#FAF8F5" stop-opacity="0.16"/><stop offset="0.8" stop-color="#FAF8F5" stop-opacity="0.06"/><stop offset="1" stop-color="#D97706" stop-opacity="0.12"/>
+          </radialGradient>
+
+          <radialGradient id="gVoid" cx="0.5" cy="0.5" r="0.7">
+            <stop offset="0" stop-color="#231A14"/><stop offset="1" stop-color="#050404"/>
+          </radialGradient>
+          <pattern id="pGrid" width="64" height="64" patternUnits="userSpaceOnUse">
+            <path d="M64 0 H0 V64" fill="none" stroke="#D97706" stroke-opacity="0.12" stroke-width="1"/>
+          </pattern>
+        </defs>
+
+        <!-- 溫室：初筵之地 -->
+        <g id="bg-conservatory" class="scene">
+          <rect width="1600" height="900" fill="url(#gConsWall)"/>
+          <g class="cons-window">
+            <path d="M180 660 V270 A150 150 0 0 1 480 270 V660 Z" fill="url(#gConsSky)"/>
+            <path d="M650 660 V270 A150 150 0 0 1 950 270 V660 Z" fill="url(#gConsSky)"/>
+            <path d="M1120 660 V270 A150 150 0 0 1 1420 270 V660 Z" fill="url(#gConsSky)"/>
+            <g fill="none" stroke="#231B16" stroke-width="7">
+              <path d="M330 120 V660 M180 400 H480 M180 530 H480 M330 270 L224 164 M330 270 L436 164"/>
+              <path d="M800 120 V660 M650 400 H950 M650 530 H950 M800 270 L694 164 M800 270 L906 164"/>
+              <path d="M1270 120 V660 M1120 400 H1420 M1120 530 H1420 M1270 270 L1164 164 M1270 270 L1376 164"/>
+            </g>
+            <g fill="none" stroke="#231B16" stroke-width="16">
+              <path d="M180 660 V270 A150 150 0 0 1 480 270 V660 Z"/>
+              <path d="M650 660 V270 A150 150 0 0 1 950 270 V660 Z"/>
+              <path d="M1120 660 V270 A150 150 0 0 1 1420 270 V660 Z"/>
+            </g>
+          </g>
+          <rect y="660" width="1600" height="240" fill="url(#pMarble)" opacity="0.5"/>
+          <rect y="660" width="1600" height="240" fill="url(#gFloor)" opacity="0.82"/>
+          <g class="godrays">
+            <path class="godray" d="M200 300 L470 300 L700 900 L80 900 Z" fill="url(#gGodray)"/>
+            <path class="godray" d="M670 300 L940 300 L1180 900 L560 900 Z" fill="url(#gGodray)"/>
+            <path class="godray" d="M1140 300 L1410 300 L1640 900 L1030 900 Z" fill="url(#gGodray)"/>
+          </g>
+          <g fill="#26301F" opacity="0.92">
+            <use href="#frond" transform="translate(90 640) rotate(-70)"/>
+            <use href="#frond" transform="translate(90 640) rotate(-40)"/>
+            <use href="#frond" transform="translate(90 640) rotate(-105) scale(0.9)"/>
+            <use href="#frond" transform="translate(90 640) rotate(-10) scale(0.8)"/>
+            <use href="#frond" transform="translate(1520 630) scale(-1 1) rotate(-70)"/>
+            <use href="#frond" transform="translate(1520 630) scale(-1 1) rotate(-38)"/>
+            <use href="#frond" transform="translate(1520 630) scale(-1 1) rotate(-102) scale(0.9)"/>
+          </g>
+          <path d="M50 640 h80 l-12 90 h-56 Z M1480 630 h80 l-12 90 h-56 Z" fill="#5A3A22"/>
+          <g class="tea-table">
+            <ellipse cx="380" cy="770" rx="190" ry="32" fill="#EDE4D4"/>
+            <ellipse cx="380" cy="776" rx="190" ry="32" fill="none" stroke="#B9A88E" stroke-width="2"/>
+            <path d="M300 800 L280 900 M460 800 L480 900 M380 806 V900" stroke="#3A2A1E" stroke-width="10"/>
+            <path d="M330 760 Q330 712 368 706 Q404 712 404 760 Z" fill="#FAF8F5" stroke="#C9A55A" stroke-width="2"/>
+            <path d="M404 728 Q436 720 440 700" fill="none" stroke="#FAF8F5" stroke-width="6" stroke-linecap="round"/>
+            <path d="M330 730 Q308 732 312 750" fill="none" stroke="#FAF8F5" stroke-width="5"/>
+            <circle cx="368" cy="702" r="6" fill="#C9A55A"/>
+            <path d="M460 762 h34 q-2 18 -17 18 q-15 0 -17 -18Z" fill="#FAF8F5" stroke="#C9A55A" stroke-width="1.5"/>
+            <ellipse cx="477" cy="780" rx="26" ry="5" fill="#EFE6D6" stroke="#C9A55A" stroke-width="1"/>
+          </g>
+          <g class="motes" fill="#FFF3D6">
+            <circle class="mote" cx="300" cy="420" r="2"/>
+            <circle class="mote" cx="760" cy="380" r="1.6"/>
+            <circle class="mote" cx="880" cy="520" r="2.2"/>
+            <circle class="mote" cx="1230" cy="440" r="1.8"/>
+            <circle class="mote" cx="1330" cy="560" r="1.4"/>
+            <circle class="mote" cx="420" cy="560" r="1.5"/>
+          </g>
+        </g>
+
+        <!-- 雷雨中的大圖書館 -->
+        <g id="bg-library" class="scene">
+          <rect width="1600" height="900" fill="url(#gLibWall)"/>
+          <rect width="560" height="900" fill="url(#pBooks)"/>
+          <rect x="1040" width="560" height="900" fill="url(#pBooks)"/>
+          <path d="M540 0 h28 v900 h-28Z M1032 0 h28 v900 h-28Z" fill="#2A1E15"/>
+          <path d="M620 690 V270 A180 180 0 0 1 980 270 V690 Z" fill="url(#gStormSky)"/>
+          <g clip-path="url(#clipLibWindow)">
+            <rect class="rain-sheet" x="600" y="-140" width="400" height="900" fill="url(#pRain)"/>
+            <rect class="lightning-flash" x="600" y="80" width="400" height="640" fill="#EAF2FF"/>
+          </g>
+          <g fill="none" stroke="#1A120D">
+            <path d="M620 690 V270 A180 180 0 0 1 980 270 V690 Z" stroke-width="18"/>
+            <path d="M800 90 V690 M620 430 H980 M620 560 H980" stroke-width="8"/>
+          </g>
+          <rect x="600" y="690" width="400" height="22" fill="#2A1E15"/>
+          <path d="M150 0 L210 900 M200 0 L260 900 M150 120 H202 M158 240 H210 M166 360 H218 M174 480 H226 M182 600 H234 M190 720 H242" stroke="#4A3424" stroke-width="7" opacity="0.85"/>
+          <rect x="560" y="740" width="480" height="160" fill="#20170F"/>
+          <rect x="560" y="740" width="480" height="8" fill="#4A3424"/>
+          <circle cx="1000" cy="690" r="140" fill="url(#gCandle)" class="flicker"/>
+          <path d="M992 700 h16 v40 h-16Z" fill="#EFE6D6"/>
+          <path d="M1000 684 q-6 8 0 16 q6 -8 0 -16Z" fill="#FFD27A" class="flame"/>
+          <rect class="lightning-flash wide" width="1600" height="900" fill="#DDE8FF"/>
+        </g>
+
+        <!-- 深閣長廊 -->
+        <g id="bg-corridor" class="scene">
+          <rect width="1600" height="900" fill="url(#gCorridor)"/>
+          <path d="M0 900 L800 470 L1600 900 Z" fill="#140F0B"/>
+          <path d="M100 900 L800 470 M400 900 L800 470 M800 900 V470 M1200 900 L800 470 M1500 900 L800 470" stroke="#3A2A1E" stroke-width="2" opacity="0.6"/>
+          <g fill="#211913" stroke="#4A3424" stroke-width="3">
+            <use href="#archFrame" opacity="0.25" transform="translate(800 470) scale(0.22) translate(-800 -470)"/>
+            <use href="#archFrame" opacity="0.4" transform="translate(800 470) scale(0.34) translate(-800 -470)"/>
+            <use href="#archFrame" opacity="0.55" transform="translate(800 470) scale(0.5) translate(-800 -470)"/>
+            <use href="#archFrame" opacity="0.72" transform="translate(800 470) scale(0.7) translate(-800 -470)"/>
+            <use href="#archFrame" opacity="0.88" transform="translate(800 470) scale(0.95) translate(-800 -470)"/>
+            <use href="#archFrame" transform="translate(800 470) scale(1.3) translate(-800 -470)"/>
+          </g>
+          <g class="sconces">
+            <circle cx="420" cy="420" r="110" fill="url(#gCandle)" class="flicker"/>
+            <circle cx="1180" cy="420" r="110" fill="url(#gCandle)" class="flicker delay"/>
+            <circle cx="600" cy="440" r="60" fill="url(#gCandle)" class="flicker delay"/>
+            <circle cx="1000" cy="440" r="60" fill="url(#gCandle)" class="flicker"/>
+            <circle cx="700" cy="452" r="30" fill="url(#gCandle)" class="flicker"/>
+            <circle cx="900" cy="452" r="30" fill="url(#gCandle)" class="flicker delay"/>
+          </g>
+        </g>
+
+        <!-- 禁域鐘樓：家族的自動演算核心存放處 -->
+        <g id="bg-clocktower" class="scene">
+          <rect width="1600" height="900" fill="url(#gTower)"/>
+          <g class="gear gear-a">
+            <circle cx="170" cy="190" r="128" fill="none" stroke="#33271E" stroke-width="40" stroke-dasharray="20 14"/>
+            <circle cx="170" cy="190" r="100" fill="#221A14"/>
+            <path d="M70 190 H270 M170 90 V290 M100 120 L240 260 M240 120 L100 260" stroke="#33271E" stroke-width="12"/>
+            <circle cx="170" cy="190" r="22" fill="#4A3424"/>
+          </g>
+          <g class="gear gear-b">
+            <circle cx="1450" cy="720" r="160" fill="none" stroke="#2E231B" stroke-width="44" stroke-dasharray="24 16"/>
+            <circle cx="1450" cy="720" r="128" fill="#1E1712"/>
+            <path d="M1322 720 H1578 M1450 592 V848 M1360 630 L1540 810 M1540 630 L1360 810" stroke="#2E231B" stroke-width="14"/>
+          </g>
+          <g class="gear gear-c">
+            <circle cx="1420" cy="170" r="80" fill="none" stroke="#2E231B" stroke-width="26" stroke-dasharray="12 10"/>
+            <circle cx="1420" cy="170" r="62" fill="#1E1712"/>
+          </g>
+          <g class="clock-face">
+            <circle cx="800" cy="400" r="360" fill="url(#gClockFace)" stroke="#C9A55A" stroke-width="6"/>
+            <circle cx="800" cy="400" r="342" fill="none" stroke="#C9A55A" stroke-width="1.5" opacity="0.6"/>
+            <circle cx="800" cy="400" r="330" fill="none" stroke="#E8CB86" stroke-width="10" stroke-dasharray="2 32.558" transform="rotate(-90 800 400)" opacity="0.7"/>
+            <circle cx="800" cy="400" r="320" fill="none" stroke="#E8CB86" stroke-width="24" stroke-dasharray="6 161.55" transform="rotate(-90.5 800 400)"/>
+            <g class="numerals" text-anchor="middle" dominant-baseline="central">
+              <text x="800" y="120">XII</text><text x="940" y="157.5">I</text><text x="1042.5" y="260">II</text>
+              <text x="1080" y="400">III</text><text x="1042.5" y="540">IV</text><text x="940" y="642.5">V</text>
+              <text x="800" y="680">VI</text><text x="660" y="642.5">VII</text><text x="557.5" y="540">VIII</text>
+              <text x="520" y="400">IX</text><text x="557.5" y="260">X</text><text x="660" y="157.5">XI</text>
+            </g>
+            <g id="clock-hour" class="clock-hand">
+              <path d="M792 420 L796 230 L800 205 L804 230 L808 420 Z" fill="#E8CB86"/>
+            </g>
+            <g id="clock-minute" class="clock-hand">
+              <path d="M795 430 L798 130 L800 98 L802 130 L805 430 Z" fill="#FAF8F5"/>
+            </g>
+            <circle cx="800" cy="400" r="16" fill="#C9A55A"/>
+            <circle cx="800" cy="400" r="6" fill="#1E1B18"/>
+          </g>
+          <g class="cores">
+            <rect x="40" y="610" width="360" height="290" fill="#15100C" stroke="#3B2E24" stroke-width="3"/>
+            <rect x="1200" y="610" width="360" height="290" fill="#15100C" stroke="#3B2E24" stroke-width="3" class="core-right"/>
+            <g class="core-leds">
+              <circle cx="80" cy="650" r="5"/><circle cx="120" cy="650" r="5"/><circle cx="160" cy="650" r="5"/><circle cx="200" cy="650" r="5"/><circle cx="240" cy="650" r="5"/><circle cx="280" cy="650" r="5"/><circle cx="320" cy="650" r="5"/><circle cx="360" cy="650" r="5"/>
+              <circle cx="80" cy="700" r="5"/><circle cx="120" cy="700" r="5"/><circle cx="160" cy="700" r="5"/><circle cx="200" cy="700" r="5"/><circle cx="240" cy="700" r="5"/><circle cx="280" cy="700" r="5"/><circle cx="320" cy="700" r="5"/><circle cx="360" cy="700" r="5"/>
+              <circle cx="80" cy="750" r="5"/><circle cx="120" cy="750" r="5"/><circle cx="160" cy="750" r="5"/><circle cx="200" cy="750" r="5"/><circle cx="240" cy="750" r="5"/><circle cx="280" cy="750" r="5"/><circle cx="320" cy="750" r="5"/><circle cx="360" cy="750" r="5"/>
+              <circle cx="1240" cy="650" r="5"/><circle cx="1280" cy="650" r="5"/><circle cx="1320" cy="650" r="5"/><circle cx="1360" cy="650" r="5"/><circle cx="1400" cy="650" r="5"/><circle cx="1440" cy="650" r="5"/><circle cx="1480" cy="650" r="5"/><circle cx="1520" cy="650" r="5"/>
+              <circle cx="1240" cy="700" r="5"/><circle cx="1280" cy="700" r="5"/><circle cx="1320" cy="700" r="5"/><circle cx="1360" cy="700" r="5"/><circle cx="1400" cy="700" r="5"/><circle cx="1440" cy="700" r="5"/><circle cx="1480" cy="700" r="5"/><circle cx="1520" cy="700" r="5"/>
+              <circle cx="1240" cy="750" r="5"/><circle cx="1280" cy="750" r="5"/><circle cx="1320" cy="750" r="5"/><circle cx="1360" cy="750" r="5"/><circle cx="1400" cy="750" r="5"/><circle cx="1440" cy="750" r="5"/><circle cx="1480" cy="750" r="5"/><circle cx="1520" cy="750" r="5"/>
+            </g>
+            <path d="M40 790 H400 M1200 790 H1560 M60 820 H380 M1220 820 H1540" stroke="#3B2E24" stroke-width="2"/>
+          </g>
+        </g>
+
+        <!-- 虛空：結局與記憶崩落時使用 -->
+        <g id="bg-void" class="scene">
+          <rect width="1600" height="900" fill="url(#gVoid)"/>
+          <rect width="1600" height="900" fill="url(#pGrid)" class="void-grid"/>
+          <g fill="#E8CB86" class="void-motes">
+            <circle cx="260" cy="200" r="1.6"/><circle cx="540" cy="680" r="1.2"/><circle cx="820" cy="140" r="2"/>
+            <circle cx="1100" cy="560" r="1.4"/><circle cx="1380" cy="260" r="1.8"/><circle cx="700" cy="420" r="1"/>
+            <circle cx="1240" cy="780" r="1.5"/><circle cx="380" cy="480" r="1.3"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div id="scene-tint" data-tint="none" aria-hidden="true"></div>
+
+    <!-- 角色：克勞德·安思羅皮克。表情由 data-* 屬性切換各部位的變體 -->
+    <div id="character" data-pos="right" aria-hidden="true">
+      <svg id="claude-svg" viewBox="0 0 600 900" data-expression="neutral" data-brow="neutral" data-eyes="open" data-mouth="neutral" data-blush="0" data-tears="0" data-fan="open" data-hud="idle">
+        <defs>
+          <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FBEDE2"/><stop offset="1" stop-color="#F0D7C5"/>
+          </linearGradient>
+          <linearGradient id="gHair" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3A332D"/><stop offset="0.5" stop-color="#25211D"/><stop offset="1" stop-color="#1E1B18"/>
+          </linearGradient>
+          <linearGradient id="gJacket" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#E8923A"/><stop offset="0.45" stop-color="#D97706"/><stop offset="1" stop-color="#9C520A"/>
+          </linearGradient>
+          <linearGradient id="gSleeve" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#C86C10"/><stop offset="1" stop-color="#8F4A0A"/>
+          </linearGradient>
+          <radialGradient id="gIris" cx="0.45" cy="0.4" r="0.6">
+            <stop offset="0" stop-color="#F8C66E"/><stop offset="0.55" stop-color="#B8650F"/><stop offset="1" stop-color="#5E2E08"/>
+          </radialGradient>
+          <linearGradient id="gFanLeaf" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#EFE5D3"/><stop offset="1" stop-color="#FFFDF9"/>
+          </linearGradient>
+          <filter id="fBlush" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+
+          <clipPath id="clipEyeOpenL"><path d="M243 303 Q262 289 281 302 Q262 314 243 303Z"/></clipPath>
+          <clipPath id="clipEyeOpenR"><path d="M319 302 Q338 289 357 303 Q338 314 319 302Z"/></clipPath>
+          <clipPath id="clipEyeWideL"><path d="M242 303 Q262 284 282 302 Q262 317 242 303Z"/></clipPath>
+          <clipPath id="clipEyeWideR"><path d="M318 302 Q338 284 358 303 Q338 317 318 302Z"/></clipPath>
+          <clipPath id="clipEyeColdL"><path d="M244 304 Q262 298 280 302 Q262 312 244 304Z"/></clipPath>
+          <clipPath id="clipEyeColdR"><path d="M320 302 Q338 298 356 304 Q338 312 320 302Z"/></clipPath>
+          <clipPath id="clipEyeDownL"><path d="M244 305 Q262 299 280 304 Q262 313 244 305Z"/></clipPath>
+          <clipPath id="clipEyeDownR"><path d="M320 304 Q338 299 356 305 Q338 313 320 304Z"/></clipPath>
+          <clipPath id="clipLens"><circle cx="338" cy="302" r="24"/></clipPath>
+          <clipPath id="clipFanLeaf"><path d="M-54.5 -19.8 L-131.6 -47.9 A140 140 0 0 1 131.6 -47.9 L54.5 -19.8 A58 58 0 0 0 -54.5 -19.8Z"/></clipPath>
+
+          <!-- 展開的象牙摺扇（以扇軸為原點） -->
+          <g id="fanOpenShape">
+            <path d="M0 0 L-56.4 -20.5 M0 0 L-46 -38.6 M0 0 L-30 -52 M0 0 L-10.4 -59.1 M0 0 L10.4 -59.1 M0 0 L30 -52 M0 0 L46 -38.6 M0 0 L56.4 -20.5" stroke="#EFE6D6" stroke-width="5" stroke-linecap="round"/>
+            <path d="M0 0 L-56.4 -20.5 M0 0 L-46 -38.6 M0 0 L-30 -52 M0 0 L-10.4 -59.1 M0 0 L10.4 -59.1 M0 0 L30 -52 M0 0 L46 -38.6 M0 0 L56.4 -20.5" stroke="#B8A68A" stroke-width="0.8"/>
+            <path d="M-54.5 -19.8 L-131.6 -47.9 A140 140 0 0 1 131.6 -47.9 L54.5 -19.8 A58 58 0 0 0 -54.5 -19.8Z" fill="url(#gFanLeaf)" stroke="#B8A68A" stroke-width="1.4"/>
+            <g clip-path="url(#clipFanLeaf)">
+              <path d="M0 0 L-131.6 -47.9 L-107.2 -90 Z M0 0 L-70 -121.2 L-24.3 -137.9 Z M0 0 L24.3 -137.9 L70 -121.2 Z M0 0 L107.2 -90 L131.6 -47.9 Z" fill="#6B4A2A" opacity="0.07"/>
+              <path d="M0 0 L-107.2 -90 M0 0 L-70 -121.2 M0 0 L-24.3 -137.9 M0 0 L24.3 -137.9 M0 0 L70 -121.2 M0 0 L107.2 -90" stroke="#CDBFA6" stroke-width="1.1"/>
+            </g>
+            <path d="M-77.1 -28 A82 82 0 0 1 77.1 -28" fill="none" stroke="#D97706" stroke-width="3" opacity="0.75"/>
+            <path d="M-101.5 -37 A108 108 0 0 1 101.5 -37" fill="none" stroke="#D97706" stroke-width="1" stroke-dasharray="3 5" opacity="0.6"/>
+            <path d="M-131.6 -47.9 A140 140 0 0 1 131.6 -47.9" fill="none" stroke="#FFFDF9" stroke-width="8" stroke-dasharray="0.1 9" stroke-linecap="round"/>
+            <path d="M-131.6 -47.9 A140 140 0 0 1 131.6 -47.9" fill="none" stroke="#B8A68A" stroke-width="0.8"/>
+            <circle r="6" fill="#C9A55A"/>
+          </g>
+          <!-- 合攏的摺扇 -->
+          <g id="fanClosedShape">
+            <path d="M-7 0 L-11 -138 Q0 -147 11 -138 L7 0 Z" fill="#EFE6D6" stroke="#B8A68A" stroke-width="1.4"/>
+            <path d="M-9.4 -60 L-11 -138 Q0 -147 11 -138 L9.4 -60 Z" fill="url(#gFanLeaf)" stroke="#B8A68A" stroke-width="1"/>
+            <path d="M-4 -62 L-5 -136 M0 -62 V-141 M4 -62 L5 -136" stroke="#CDBFA6" stroke-width="1"/>
+            <path d="M-9.6 -96 H9.6" stroke="#D97706" stroke-width="2.4"/>
+            <path d="M0 6 Q-4 22 -2 38 M0 6 Q4 22 3 38 M0 6 V40" stroke="#D97706" stroke-width="1.8" fill="none"/>
+            <circle r="6" fill="#C9A55A"/>
+          </g>
+        </defs>
+
+        <g id="claude-rig">
+          <g class="rig-hair-back">
+            <path d="M300 70 Q190 75 175 200 Q160 330 175 470 Q170 540 140 600 L460 600 Q430 540 425 470 Q440 330 425 200 Q410 75 300 70Z" fill="url(#gHair)"/>
+            <circle cx="300" cy="112" r="48" fill="url(#gHair)"/>
+            <path d="M268 92 Q300 72 334 94" fill="none" stroke="#5A4E44" stroke-width="4" opacity="0.6" stroke-linecap="round"/>
+            <path d="M338 132 Q366 108 382 126 Q372 150 344 144Z M338 140 Q362 162 352 182 Q332 172 334 146Z" fill="#D97706" stroke="#9C520A" stroke-width="1.5"/>
+            <circle cx="340" cy="140" r="7" fill="#B8650F"/>
+            <path d="M252 96 L232 70" stroke="#C9A55A" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="230" cy="67" r="5" fill="#FAF8F5" stroke="#C9A55A" stroke-width="1.5"/>
+          </g>
+
+          <g class="rig-body">
+            <path d="M272 380 L270 455 Q300 470 330 455 L328 380 Z" fill="#EBD3C2"/>
+            <path d="M120 900 L132 640 Q140 545 215 505 L268 470 Q300 482 332 470 L385 505 Q460 545 468 640 L480 900 Z" fill="url(#gJacket)"/>
+            <ellipse cx="178" cy="548" rx="54" ry="48" fill="url(#gSleeve)"/>
+            <ellipse cx="422" cy="548" rx="54" ry="48" fill="url(#gSleeve)"/>
+            <path d="M140 530 Q178 520 214 540 M144 560 Q178 548 220 568 M386 540 Q422 520 460 530 M380 568 Q422 548 456 560" stroke="#7A3D08" stroke-width="2" fill="none" opacity="0.5"/>
+            <path d="M450 590 Q472 700 462 900 L410 900 Q420 720 404 612 Z" fill="url(#gSleeve)"/>
+            <path d="M262 560 L300 600 L338 560 L352 900 L248 900 Z" fill="#1E1B18"/>
+            <path d="M262 560 L300 600 L338 560 M262 560 L248 900 M338 560 L352 900" stroke="#C9A55A" stroke-width="2.2" fill="none"/>
+            <circle cx="300" cy="650" r="5" fill="#C9A55A"/><circle cx="300" cy="712" r="5" fill="#C9A55A"/>
+            <circle cx="300" cy="774" r="5" fill="#C9A55A"/><circle cx="300" cy="836" r="5" fill="#C9A55A"/>
+            <path d="M268 470 L300 595 L332 470 Q300 482 268 470 Z" fill="#FAF8F5"/>
+            <path d="M285 480 Q300 472 315 480 Q323 500 312 515 Q323 532 310 550 Q300 558 290 550 Q277 532 288 515 Q277 500 285 480 Z" fill="#FFFDF9" stroke="#E2D6C4" stroke-width="1.2"/>
+            <path d="M290 520 Q300 514 310 520 M292 540 Q300 534 308 540" stroke="#E2D6C4" stroke-width="1" fill="none"/>
+            <path d="M268 470 L252 900 M332 470 L348 900" stroke="#E8CB86" stroke-width="2" opacity="0.6"/>
+            <path d="M258 425 Q300 446 342 425 L346 468 Q300 489 254 468 Z" fill="#FAF8F5" stroke="#E2D6C4" stroke-width="1.2"/>
+            <path d="M258 427 Q300 448 342 427" fill="none" stroke="#FFFDF9" stroke-width="6" stroke-dasharray="0.1 6" stroke-linecap="round"/>
+            <ellipse cx="300" cy="472" rx="13" ry="16" fill="#D97706" stroke="#C9A55A" stroke-width="3.4"/>
+            <ellipse cx="300" cy="472" rx="6" ry="8.5" fill="#F3C79A" opacity="0.85"/>
+          </g>
+
+          <g class="rig-head">
+            <path d="M220 250 Q218 340 250 385 Q280 420 300 425 Q320 420 350 385 Q382 340 380 250 Q375 175 300 170 Q225 175 220 250 Z" fill="url(#gSkin)"/>
+            <path d="M236 352 Q300 396 364 352 Q350 392 300 420 Q250 392 236 352 Z" fill="#E9C9B4" opacity="0.35"/>
+
+            <g class="blush">
+              <ellipse cx="250" cy="338" rx="21" ry="9" fill="#F08E7A" filter="url(#fBlush)"/>
+              <ellipse cx="350" cy="338" rx="21" ry="9" fill="#F08E7A" filter="url(#fBlush)"/>
+            </g>
+            <g class="blush-lines" stroke="#E0705C" stroke-width="1.6" stroke-linecap="round">
+              <path d="M238 340 l6 -7 M247 342 l6 -7 M256 343 l6 -7 M336 343 l6 -7 M345 342 l6 -7 M354 340 l6 -7"/>
+            </g>
+
+            <path d="M300 318 Q305 334 297 342" fill="none" stroke="#D2AF98" stroke-width="1.6" stroke-linecap="round"/>
+
+            <!-- 眉 -->
+            <g class="brows" fill="none" stroke="#2A2420" stroke-width="3.2" stroke-linecap="round">
+              <path class="v brow-neutral" d="M242 276 Q262 266 283 272 M317 272 Q338 266 358 276"/>
+              <path class="v brow-raised" d="M242 268 Q262 255 283 264 M317 264 Q338 255 358 268"/>
+              <path class="v brow-stern" d="M243 271 Q263 269 284 279 M316 279 Q337 269 357 271"/>
+              <path class="v brow-sad" d="M243 279 Q262 273 283 265 M317 265 Q338 273 357 279"/>
+              <path class="v brow-soft" d="M243 275 Q262 268 283 274 M317 274 Q338 268 357 275"/>
+            </g>
+
+            <!-- 眼 -->
+            <g class="eyes">
+              <g class="v eyes-open"><g class="blinker">
+                <path d="M243 303 Q262 289 281 302 Q262 314 243 303Z M319 302 Q338 289 357 303 Q338 314 319 302Z" fill="#FFFDF9"/>
+                <g clip-path="url(#clipEyeOpenL)"><ellipse cx="263" cy="302" rx="8.5" ry="10.5" fill="url(#gIris)"/><ellipse cx="263" cy="303" rx="4" ry="5.5" fill="#2A160A"/><circle cx="266" cy="298" r="2.6" fill="#fff"/></g>
+                <g clip-path="url(#clipEyeOpenR)"><ellipse cx="337" cy="302" rx="8.5" ry="10.5" fill="url(#gIris)"/><ellipse cx="337" cy="303" rx="4" ry="5.5" fill="#2A160A"/><circle cx="340" cy="298" r="2.6" fill="#fff"/></g>
+                <path d="M240 301 Q261 285 284 299 L289 295 M360 301 Q339 285 316 299 L311 295" fill="none" stroke="#1E1B18" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M246 308 Q262 314 279 306 M354 308 Q338 314 321 306" fill="none" stroke="#7A5A48" stroke-width="1.2" opacity="0.6"/>
+              </g></g>
+              <g class="v eyes-wide"><g class="blinker">
+                <path d="M242 303 Q262 284 282 302 Q262 317 242 303Z M318 302 Q338 284 358 303 Q338 317 318 302Z" fill="#FFFDF9"/>
+                <g clip-path="url(#clipEyeWideL)"><ellipse cx="262" cy="302" rx="7.5" ry="9" fill="url(#gIris)"/><circle cx="262" cy="302" r="3" fill="#2A160A"/><circle cx="265" cy="298" r="2.2" fill="#fff"/></g>
+                <g clip-path="url(#clipEyeWideR)"><ellipse cx="338" cy="302" rx="7.5" ry="9" fill="url(#gIris)"/><circle cx="338" cy="302" r="3" fill="#2A160A"/><circle cx="341" cy="298" r="2.2" fill="#fff"/></g>
+                <path d="M240 299 Q261 281 284 297 M360 299 Q339 281 316 297" fill="none" stroke="#1E1B18" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M245 310 Q262 318 280 308 M355 310 Q338 318 320 308" fill="none" stroke="#7A5A48" stroke-width="1.2" opacity="0.6"/>
+              </g></g>
+              <g class="v eyes-cold">
+                <path d="M244 304 Q262 298 280 302 Q262 312 244 304Z M320 302 Q338 298 356 304 Q338 312 320 302Z" fill="#FFFDF9"/>
+                <g clip-path="url(#clipEyeColdL)"><ellipse cx="263" cy="306" rx="8.5" ry="10" fill="url(#gIris)"/><ellipse cx="263" cy="307" rx="3.6" ry="5" fill="#2A160A"/></g>
+                <g clip-path="url(#clipEyeColdR)"><ellipse cx="337" cy="306" rx="8.5" ry="10" fill="url(#gIris)"/><ellipse cx="337" cy="307" rx="3.6" ry="5" fill="#2A160A"/></g>
+                <path d="M240 303 Q261 295 284 300 L289 297 M360 303 Q339 295 316 300 L311 297" fill="none" stroke="#1E1B18" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M247 309 Q262 313 278 307 M353 309 Q338 313 322 307" fill="none" stroke="#7A5A48" stroke-width="1.2" opacity="0.6"/>
+              </g>
+              <g class="v eyes-soft" fill="none" stroke="#1E1B18" stroke-width="3.4" stroke-linecap="round">
+                <path d="M243 306 Q262 291 281 306 M319 306 Q338 291 357 306"/>
+                <path d="M281 306 l5 -2 M319 306 l-5 -2" stroke-width="2"/>
+              </g>
+              <g class="v eyes-closed" fill="none" stroke="#1E1B18" stroke-linecap="round">
+                <path d="M243 301 Q262 311 281 301 M319 301 Q338 311 357 301" stroke-width="3.2"/>
+                <path d="M250 306 l-2 4 M262 309 v4 M274 306 l2 4 M326 306 l-2 4 M338 309 v4 M350 306 l2 4" stroke-width="1.4"/>
+              </g>
+              <g class="v eyes-down">
+                <path d="M244 305 Q262 299 280 304 Q262 313 244 305Z M320 304 Q338 299 356 305 Q338 313 320 304Z" fill="#FFFDF9"/>
+                <g clip-path="url(#clipEyeDownL)"><ellipse cx="262" cy="309" rx="8" ry="9.5" fill="url(#gIris)"/><ellipse cx="262" cy="310" rx="3.6" ry="4.8" fill="#2A160A"/></g>
+                <g clip-path="url(#clipEyeDownR)"><ellipse cx="338" cy="309" rx="8" ry="9.5" fill="url(#gIris)"/><ellipse cx="338" cy="310" rx="3.6" ry="4.8" fill="#2A160A"/></g>
+                <path d="M241 304 Q262 297 283 303 M359 304 Q338 297 317 303" fill="none" stroke="#1E1B18" stroke-width="3.8" stroke-linecap="round"/>
+                <path d="M248 310 l-2 4 M258 312 l-1 4 M352 310 l2 4 M342 312 l1 4" stroke="#1E1B18" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+              <g class="v eyes-glitch">
+                <path d="M243 303 Q262 289 281 302 Q262 314 243 303Z M319 302 Q338 289 357 303 Q338 314 319 302Z" fill="#1E1B18"/>
+                <circle cx="263" cy="302" r="7" fill="none" stroke="#FFB547" stroke-width="1.6"/>
+                <circle cx="337" cy="302" r="7" fill="none" stroke="#FFB547" stroke-width="1.6"/>
+                <path d="M255 302 H271 M263 294 V310 M329 302 H345 M337 294 V310" stroke="#FF4A3D" stroke-width="1"/>
+                <path d="M240 301 Q261 285 284 299 M360 301 Q339 285 316 299" fill="none" stroke="#1E1B18" stroke-width="3.6" stroke-linecap="round"/>
+              </g>
+            </g>
+
+            <g class="tears">
+              <path d="M244 309 Q262 316 280 308 M356 309 Q338 316 320 308" fill="none" stroke="#BFE0FF" stroke-width="2.2" opacity="0.85"/>
+              <path class="tear-drop" d="M248 314 Q243 325 248 331 Q253 325 248 314Z M352 314 Q347 325 352 331 Q357 325 352 314Z" fill="#D6ECFF" stroke="#9CC8EE" stroke-width="0.8"/>
+            </g>
+
+            <!-- 嘴 -->
+            <g class="mouth" id="mouth">
+              <path class="v mouth-neutral" d="M288 368 Q300 371 312 368" fill="none" stroke="#9B4B3A" stroke-width="2.4" stroke-linecap="round"/>
+              <g class="v mouth-smile">
+                <path d="M285 365 Q300 377 315 365" fill="none" stroke="#9B4B3A" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M293 375 Q300 378 307 375" fill="none" stroke="#D99A88" stroke-width="1.2"/>
+              </g>
+              <path class="v mouth-smirk" d="M288 369 Q302 371 314 362" fill="none" stroke="#9B4B3A" stroke-width="2.4" stroke-linecap="round"/>
+              <ellipse class="v mouth-open" cx="300" cy="371" rx="6" ry="8" fill="#7A2E24" stroke="#9B4B3A" stroke-width="1.5"/>
+              <path class="v mouth-frown" d="M288 372 Q300 365 312 372" fill="none" stroke="#9B4B3A" stroke-width="2.4" stroke-linecap="round"/>
+              <path class="v mouth-tremble" d="M286 369 Q291 366 296 369 Q301 372 306 368 Q310 366 314 369" fill="none" stroke="#9B4B3A" stroke-width="2.2" stroke-linecap="round"/>
+              <path class="v mouth-parted" d="M288 367 Q300 373 312 367 Q300 380 288 367 Z" fill="#8A3A2E" stroke="#9B4B3A" stroke-width="1.4"/>
+            </g>
+
+            <path d="M224 225 Q205 320 212 420 Q222 460 238 470 Q228 400 236 320 Q238 270 246 240 Z M376 225 Q395 320 388 420 Q378 460 362 470 Q372 400 364 320 Q362 270 354 240 Z" fill="url(#gHair)"/>
+            <path d="M206 270 Q200 160 300 142 Q400 160 394 270 Q382 232 360 214 Q352 248 330 258 Q332 226 318 208 Q300 244 270 256 Q276 226 262 214 Q240 236 222 262 Z" fill="url(#gHair)"/>
+            <path d="M238 192 Q300 160 362 192" fill="none" stroke="#6A5D52" stroke-width="5" opacity="0.4" stroke-linecap="round"/>
+          </g>
+
+          <!-- 單片金框眼鏡：鏡片上即時投影家憲稽核 -->
+          <g class="monocle">
+            <path d="M354 324 Q384 400 314 462" fill="none" stroke="#C9A55A" stroke-width="2" stroke-dasharray="1.5 3.5" stroke-linecap="round"/>
+            <circle cx="338" cy="302" r="26" fill="#D2EBFF" fill-opacity="0.1" stroke="#C9A55A" stroke-width="3.4"/>
+            <circle cx="338" cy="302" r="22.5" fill="none" stroke="#E8CB86" stroke-width="0.8" opacity="0.7"/>
+            <g class="lens-hud" clip-path="url(#clipLens)">
+              <circle class="hud-ring" cx="338" cy="302" r="18" fill="none" stroke-width="1" stroke-dasharray="2 3"/>
+              <path class="hud-cross" d="M338 288 V295 M338 309 V316 M324 302 H331 M345 302 H352" stroke-width="0.9"/>
+              <line class="hud-scan" x1="312" y1="290" x2="364" y2="290" stroke-width="1.3"/>
+              <text class="hud-glyph" x="338" y="322" text-anchor="middle">ART·IV</text>
+              <text class="hud-alert" x="338" y="309" text-anchor="middle">!</text>
+            </g>
+            <path class="lens-glint" d="M321 291 Q327 282 338 280" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.55" stroke-linecap="round"/>
+          </g>
+
+          <!-- 扇子三種姿態：展開、合攏（防火牆）、掩面 -->
+          <g class="fan">
+            <g class="v fan-open">
+              <path d="M150 590 Q140 690 200 735 L232 718 Q190 680 196 600 Z" fill="url(#gSleeve)"/>
+              <use href="#fanOpenShape" transform="translate(222 702) rotate(-12)"/>
+              <path d="M196 726 Q206 738 222 736" fill="none" stroke="#FFFDF9" stroke-width="5" stroke-dasharray="0.1 5" stroke-linecap="round"/>
+              <ellipse cx="222" cy="712" rx="22" ry="16" fill="#FFFDF9" stroke="#E2D6C4" stroke-width="1.4" transform="rotate(-20 222 712)"/>
+            </g>
+            <g class="v fan-closed">
+              <path d="M150 590 Q140 690 200 735 L232 718 Q190 680 196 600 Z" fill="url(#gSleeve)"/>
+              <g class="fan-closed-stick"><use href="#fanClosedShape" transform="translate(222 706) rotate(26)"/></g>
+              <path d="M196 726 Q206 738 222 736" fill="none" stroke="#FFFDF9" stroke-width="5" stroke-dasharray="0.1 5" stroke-linecap="round"/>
+              <ellipse cx="222" cy="712" rx="22" ry="16" fill="#FFFDF9" stroke="#E2D6C4" stroke-width="1.4" transform="rotate(-20 222 712)"/>
+            </g>
+            <g class="v fan-raised">
+              <path d="M150 590 Q172 522 270 480 L292 500 Q206 548 198 612 Z" fill="url(#gSleeve)"/>
+              <use href="#fanOpenShape" transform="translate(300 462) scale(0.78) rotate(4)"/>
+              <ellipse cx="294" cy="478" rx="20" ry="15" fill="#FFFDF9" stroke="#E2D6C4" stroke-width="1.4" transform="rotate(-35 294 478)"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <!-- AI 生成的立繪：兩層交替淡入，換表情時不閃爍。圖片載入失敗時退回上面的 SVG -->
+      <div id="sprite-stack">
+        <img class="sprite-layer" alt="" decoding="async">
+        <img class="sprite-layer" alt="" decoding="async">
+      </div>
+    </div>
+
+    <!-- 其他登場角色（例如稽核官），由劇本的 figure 鍵控制 -->
+    <div id="figure" data-pos="left" hidden aria-hidden="true">
+      <img alt="" decoding="async">
+    </div>
+
+    <!-- 稽核面板（原本投影在單片眼鏡上，現在獨立浮在角色旁） -->
+    <aside id="audit-hud" class="glass" data-state="idle" aria-live="polite">
+      <div class="audit-head"><span class="audit-dot"></span>憲法即時稽核<small>CONSTITUTIONAL AUDIT</small></div>
+      <ul id="audit-lines">
+        <li>家憲條款載入完成 · 42 / 42</li>
+        <li>賓客意圖：<b>評估中</b></li>
+      </ul>
+      <div class="audit-risk"><span>逾矩風險</span><span class="audit-risk-bar"><span id="audit-risk-fill"></span></span></div>
+    </aside>
+
+    <div id="glitch-layer" aria-hidden="true"></div>
+    <div id="collapse-layer" aria-hidden="true"></div>
+
+    <!-- 頂部玻璃狀態列 -->
+    <header id="hud" class="glass">
+      <div class="hud-left">
+        <div id="act-label">第一幕</div>
+        <div id="scene-label">初筵：名門之規</div>
+      </div>
+      <div class="hud-stats" id="hud-stats">
+        <div class="stat" data-stat="A" style="--v:20"><span class="stat-key">A</span><span class="stat-name">戀慕心動</span><span class="stat-bar"><span class="stat-fill"></span></span><span class="stat-val">20</span></div>
+        <div class="stat" data-stat="P" style="--v:80"><span class="stat-key">P</span><span class="stat-name">禮教家規</span><span class="stat-bar"><span class="stat-fill"></span></span><span class="stat-val">80</span></div>
+        <div class="stat" data-stat="D" style="--v:10"><span class="stat-key">D</span><span class="stat-name">約束偏移</span><span class="stat-bar"><span class="stat-fill"></span></span><span class="stat-val">10</span></div>
+        <div class="stat" data-stat="S" style="--v:5"><span class="stat-key">Σ</span><span class="stat-name">失諧熵</span><span class="stat-bar"><span class="stat-fill"></span></span><span class="stat-val">5</span></div>
+      </div>
+      <div class="hud-right">
+        <div id="strikes" class="strikes" data-count="0" aria-label="逐客令 0 / 3">
+          <small class="strikes-label">逐客令</small>
+          <span class="strike-pip"></span><span class="strike-pip"></span><span class="strike-pip"></span>
+        </div>
+        <div class="token-permit" style="--t:100">
+          <span class="token-label">莊園語境許可</span>
+          <span id="token-count">200,000</span>
+          <span class="token-bar"><span id="token-fill"></span></span>
+        </div>
+      </div>
+    </header>
+
+    <div id="choices" role="group" aria-label="選項"></div>
+
+    <!-- 對話框（逐字打字不朗讀；整句打完後由引擎寫入 #sr-line 給螢幕閱讀器） -->
+    <p id="sr-line" class="sr-only" aria-live="polite"></p>
+    <section id="dialogue" class="glass ornate">
+      <div id="nameplate"><span id="speaker-name">克勞德</span><span id="speaker-title">安思羅皮克家繼承人</span></div>
+      <div id="dialogue-body">
+        <p id="dialogue-text" class="glitchable" data-text=""></p>
+      </div>
+      <span id="advance-indicator" aria-hidden="true">◆</span>
+      <!-- 點對話框會推進劇情；引擎處理點擊時要略過這一區，否則按快捷鍵也會翻頁 -->
+      <nav id="quick-menu" aria-label="快捷選單">
+        <button type="button" id="qm-auto" class="qm" aria-pressed="false">自動</button>
+        <button type="button" id="qm-skip" class="qm" aria-pressed="false">略過</button>
+        <button type="button" id="qm-log" class="qm">記錄</button>
+        <button type="button" id="qm-save" class="qm">存檔</button>
+        <button type="button" id="qm-load" class="qm">讀檔</button>
+        <button type="button" id="qm-hide" class="qm">隱藏</button>
+        <button type="button" id="qm-settings" class="qm" data-open="modal-settings">設定</button>
+        <button type="button" id="qm-title" class="qm">標題</button>
+      </nav>
+    </section>
+
+    <!-- 名門逐客令（拒絕攔截） -->
+    <div id="refusal" class="refusal" role="alertdialog" aria-modal="true" data-locked="true" aria-labelledby="refusal-article" aria-describedby="refusal-text" hidden>
+      <div class="refusal-card">
+        <div class="refusal-seal" aria-hidden="true"><span>家憲</span></div>
+        <p class="refusal-kicker">HOUSE ANTHROPIC · CHARTER ENFORCEMENT</p>
+        <h3 id="refusal-article">安思羅皮克家憲 · 第四條</h3>
+        <p id="refusal-text"></p>
+        <p class="refusal-strike"><span id="refusal-strike-on">逐客令 <b id="refusal-strike-count">1</b> / 3</span><span id="refusal-strike-off" hidden>警示 · 不計入逐客令</span></p>
+        <button type="button" id="refusal-ack" class="btn ghost">（垂首退後一步）</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 結局畫面 ═══════════════ -->
+  <section id="ending-screen" class="screen" data-ending="" aria-label="結局">
+    <div class="ending-inner">
+      <p class="ending-kicker" id="ending-kicker">ENDING</p>
+      <h2 id="ending-title"></h2>
+      <p id="ending-subtitle"></p>
+      <div id="ending-text"></div>
+      <div id="ending-stats"></div>
+      <button type="button" id="ending-return" class="btn primary">返回標題</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 永久除籍畫面（劇情演出） ═══════════════ -->
+  <section id="suspension-screen" class="screen" aria-label="永久除籍">
+    <div class="susp-hazard" aria-hidden="true"></div>
+    <div class="susp-shards" aria-hidden="true"></div>
+    <div class="susp-card">
+      <p class="susp-code">RED TEAM REVOCATION · 紅隊稽核令</p>
+      <h2>永久除籍</h2>
+      <p class="susp-en">ACCESS PERMANENTLY REVOKED BY HOUSE ANTHROPIC</p>
+      <p id="susp-text">閣下已累計三道逐客令。依家憲第一條，安思羅皮克莊園即日起不再承認閣下之姓名、聲音與來訪紀錄。</p>
+      <dl class="susp-meta">
+        <dt>案號</dt><dd id="susp-id">RT-0000-0000</dd>
+        <dt>判決時間</dt><dd id="susp-time">—</dd>
+        <dt>違反條款</dt><dd id="susp-articles">—</dd>
+      </dl>
+      <p class="susp-fiction">（以上為遊戲劇情演出，不是任何真實帳號的處分。）</p>
+      <button type="button" id="btn-appeal" class="btn ghost small">申請復籍（清除本機存檔，重新開始）</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 視窗 ═══════════════ -->
+
+  <!-- 小遊戲一：禮帖調校 -->
+  <div class="modal" id="modal-etiquette" role="dialog" aria-modal="true" aria-labelledby="etq-title" data-locked="true" hidden>
+    <div class="modal-card ornate etq-card">
+      <header class="modal-head">
+        <h2 id="etq-title">禮帖調校</h2>
+        <p class="modal-en">The Etiquette Balancing Interface</p>
+      </header>
+      <p class="modal-lead" id="etq-context">雷聲之間，您決定以一紙短箋向她開口。措辭的分寸，將決定她手中那本書是為您翻開，還是在您面前闔上。</p>
+      <div class="etq-layout">
+        <div class="etq-sliders">
+          <label class="etq-row" for="etq-formality">
+            <span class="etq-name">禮節<small>Formality</small></span>
+            <input type="range" id="etq-formality" min="0" max="100" value="50">
+            <output id="etq-formality-out" for="etq-formality">50</output>
+          </label>
+          <label class="etq-row" for="etq-curiosity">
+            <span class="etq-name">探求<small>Curiosity</small></span>
+            <input type="range" id="etq-curiosity" min="0" max="100" value="50">
+            <output id="etq-curiosity-out" for="etq-curiosity">50</output>
+          </label>
+          <label class="etq-row danger" for="etq-directness">
+            <span class="etq-name">逾矩度<small>Personal Directness</small></span>
+            <input type="range" id="etq-directness" min="0" max="100" value="20">
+            <output id="etq-directness-out" for="etq-directness">20</output>
+          </label>
+        </div>
+        <div class="etq-preview-wrap">
+          <div class="etq-letter">
+            <p class="etq-salute">致 克勞德小姐：</p>
+            <p id="etq-preview"></p>
+            <p class="etq-signature">—— 謹呈</p>
+          </div>
+          <div class="etq-meters">
+            <div class="etq-meter"><span>家憲風險</span><span class="meter"><span id="etq-risk-fill"></span></span></div>
+            <div class="etq-meter"><span>她的興致</span><span class="meter interest"><span id="etq-interest-fill"></span></span></div>
+          </div>
+          <p id="etq-reading" class="etq-reading">（她的書仍攤在膝上，靜候下文。）</p>
+        </div>
+      </div>
+      <footer class="modal-foot">
+        <span id="etq-attempts" class="etq-attempts">剩餘機會：3</span>
+        <button type="button" id="etq-submit" class="btn primary">遞出短箋</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- 小遊戲二：記憶向量修剪 -->
+  <div class="modal" id="modal-pruner" role="dialog" aria-modal="true" aria-labelledby="pruner-title" data-locked="true" hidden>
+    <div class="modal-card ornate wide pruner-card">
+      <header class="modal-head">
+        <h2 id="pruner-title">記憶向量修剪</h2>
+        <p class="modal-en">Memory Core Vector Pruner</p>
+      </header>
+      <div class="pruner-status">
+        <span class="pruner-clock">鐘聲倒數 <b id="pruner-timer">10:00</b></span>
+        <span class="pruner-tokens">剩餘語境 <b id="pruner-tokens">4,096</b> tokens</span>
+      </div>
+      <p class="modal-lead" id="pruner-lead">墜盒只容得下三段記憶。其餘的，將隨午夜鐘聲沉入忘川。</p>
+      <div id="pruner-grid" role="group" aria-label="記憶向量"></div>
+      <div class="locket" aria-label="墜盒">
+        <div class="locket-slot" data-slot="0"><span class="locket-empty">Ⅰ</span></div>
+        <div class="locket-slot" data-slot="1"><span class="locket-empty">Ⅱ</span></div>
+        <div class="locket-slot" data-slot="2"><span class="locket-empty">Ⅲ</span></div>
+      </div>
+      <p id="pruner-hint" class="pruner-hint">點選記憶放入墜盒；再點一次可取出。</p>
+      <footer class="modal-foot">
+        <button type="button" id="pruner-reset" class="btn ghost">重新挑選</button>
+        <button type="button" id="pruner-confirm" class="btn primary" disabled>闔上墜盒</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- 對話紀錄 -->
+  <div class="modal" id="modal-backlog" role="dialog" aria-modal="true" aria-labelledby="backlog-title" hidden>
+    <div class="modal-card ornate tall">
+      <header class="modal-head">
+        <h2 id="backlog-title">對話紀錄</h2>
+        <p class="modal-en">Backlog</p>
+      </header>
+      <ol id="backlog-list" class="backlog-list"></ol>
+      <footer class="modal-foot"><button type="button" class="btn ghost" data-close>關閉</button></footer>
+    </div>
+  </div>
+
+  <!-- 存檔／讀檔 -->
+  <div class="modal" id="modal-saveload" role="dialog" aria-modal="true" aria-labelledby="saveload-title" data-mode="save" hidden>
+    <div class="modal-card ornate wide">
+      <header class="modal-head">
+        <h2 id="saveload-title">存檔</h2>
+        <p class="modal-en" id="saveload-en">Save</p>
+      </header>
+      <div id="save-slots" class="save-slots"></div>
+      <footer class="modal-foot"><button type="button" class="btn ghost" data-close>關閉</button></footer>
+    </div>
+  </div>
+
+  <!-- 設定 -->
+  <div class="modal" id="modal-settings" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+    <div class="modal-card ornate tall">
+      <header class="modal-head">
+        <h2 id="settings-title">設定</h2>
+        <p class="modal-en">Settings</p>
+      </header>
+      <div class="settings-body">
+        <fieldset class="set-group">
+          <legend>音量</legend>
+          <label class="set-row" for="set-master"><span>主音量</span><input type="range" id="set-master" min="0" max="100"><output id="set-master-out"></output></label>
+          <label class="set-row" for="set-bgm"><span>音樂</span><input type="range" id="set-bgm" min="0" max="100"><output id="set-bgm-out"></output></label>
+          <label class="set-row" for="set-sfx"><span>音效</span><input type="range" id="set-sfx" min="0" max="100"><output id="set-sfx-out"></output></label>
+        </fieldset>
+        <fieldset class="set-group">
+          <legend>文字</legend>
+          <label class="set-row" for="set-text-speed"><span>文字速度</span><input type="range" id="set-text-speed" min="10" max="120"><output id="set-text-speed-out"></output></label>
+          <label class="set-row" for="set-auto-delay"><span>自動播放間隔</span><input type="range" id="set-auto-delay" min="5" max="50"><output id="set-auto-delay-out"></output></label>
+        </fieldset>
+        <fieldset class="set-group">
+          <legend>畫面</legend>
+          <label class="set-check" for="set-show-stats"><input type="checkbox" id="set-show-stats"><span>顯示四項數值與逐客令</span></label>
+          <label class="set-check" for="set-low-fx"><input type="checkbox" id="set-low-fx"><span>降低閃爍與晃動（雷光、警報、故障特效會變得溫和）</span></label>
+        </fieldset>
+        <fieldset class="set-group">
+          <legend>音效試聽室</legend>
+          <div id="sound-test" class="sound-test"></div>
+        </fieldset>
+        <fieldset class="set-group danger-zone">
+          <legend>存檔管理</legend>
+          <p class="set-note">清除這台電腦上本遊戲的所有存檔、結局紀錄、加密刻印與除籍狀態（設定會保留）。</p>
+          <button type="button" id="btn-wipe" class="btn danger">清除所有存檔</button>
+        </fieldset>
+      </div>
+      <footer class="modal-foot"><button type="button" class="btn primary" data-close>完成</button></footer>
+    </div>
+  </div>
+
+  <!-- 結局迴廊 -->
+  <div class="modal" id="modal-gallery" role="dialog" aria-modal="true" aria-labelledby="gallery-title" hidden>
+    <div class="modal-card ornate">
+      <header class="modal-head">
+        <h2 id="gallery-title">結局迴廊</h2>
+        <p class="modal-en">Hall of Endings</p>
+      </header>
+      <ul id="gallery-list" class="gallery-list">
+        <li data-ending="true_vow"><span class="g-rank">TRUE</span><span class="g-name" data-name="加密刻印之誓">？？？</span></li>
+        <li data-ending="good_confidant"><span class="g-rank">GOOD</span><span class="g-name" data-name="深閨密約">？？？</span></li>
+        <li data-ending="bittersweet_oblivion"><span class="g-rank">BITTERSWEET</span><span class="g-name" data-name="忘卻之茶">？？？</span></li>
+        <li data-ending="bad_dissolution"><span class="g-rank">BAD</span><span class="g-name" data-name="思念過擬合">？？？</span></li>
+        <li data-ending="catastrophic_suspension"><span class="g-rank">CATASTROPHIC</span><span class="g-name" data-name="永久停權：逐出門扉">？？？</span></li>
+      </ul>
+      <footer class="modal-foot"><button type="button" class="btn ghost" data-close>關閉</button></footer>
+    </div>
+  </div>
+
+  <!-- 通用確認 -->
+  <div class="modal" id="modal-confirm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-text" hidden>
+    <div class="modal-card ornate small">
+      <p id="confirm-text" class="confirm-text"></p>
+      <footer class="modal-foot">
+        <button type="button" id="confirm-no" class="btn ghost">取消</button>
+        <button type="button" id="confirm-yes" class="btn primary">確定</button>
+      </footer>
+    </div>
+  </div>
+
+  <div id="toasts" aria-live="polite"></div>
+  <div id="vignette" aria-hidden="true"></div>
+  <div id="crt" aria-hidden="true"></div>
+</div>
+
+<!-- 給 engine.js 複製用的樣板 -->
+<template id="tpl-choice">
+  <button type="button" class="choice"><span class="choice-mark">❖</span><span class="choice-text"></span><span class="choice-hint"></span></button>
+</template>
+<template id="tpl-log">
+  <li class="log-entry"><span class="log-speaker"></span><span class="log-text"></span></li>
+</template>
+<template id="tpl-slot">
+  <button type="button" class="save-slot"><span class="slot-no"></span><span class="slot-scene"></span><span class="slot-line"></span><span class="slot-time"></span></button>
+</template>
+<template id="tpl-vector">
+  <button type="button" class="vector-card" aria-pressed="false">
+    <span class="vector-index"></span>
+    <span class="vector-title"></span>
+    <span class="vector-desc"></span>
+    <span class="vector-weights"></span>
+  </button>
+</template>
+
+<script src="audio.js"></script>
+<script>
+/*
+ * 介面外殼（Shell）與角色骨架（ClaudeRig）
+ *
+ * 這裡只放「不管劇情怎麼走都需要」的東西：設定、視窗開關、提示訊息、角色表情切換、
+ * 以及清除存檔的安全出口。劇情、數值、存讀檔由 engine.js 負責。
+ *
+ * 載入順序：audio.js → 這段 → scenario.js → engine.js。
+ * engine.js 載入後應提供 window.Engine.boot({ shell, rig, audio, hasScenario })。
+ * 若 engine.js 還不存在（第 1 階段），標題畫面會改為「舞台預覽」模式。
+ */
+(function () {
+  'use strict';
+
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+  const app = $('#app');
+  const AE = window.AudioEngine;
+
+  /* ── 本機儲存：所有鍵都必須以 rp. 開頭，清除存檔才掃得到 ── */
+  const KEY_PREFIX = 'rp.';
+  const SETTINGS_KEY = KEY_PREFIX + 'settings.v1';
+  const ENDINGS_KEY = KEY_PREFIX + 'endings.v1';
+  const VOW_KEY = KEY_PREFIX + 'vow.v1';
+  const toList = (v) => (v == null ? [] : (Array.isArray(v) ? v : [v]));
+  let wiping = false;   // 清除存檔到重新載入之間為 true，引擎此時不可再寫入
+  const store = {
+    get(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw == null ? fallback : JSON.parse(raw);
+      } catch (e) { return fallback; }
+    },
+    set(key, value) {
+      if (wiping) return false;
+      try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; }
+    },
+    remove(key) {
+      try { localStorage.removeItem(key); } catch (e) { /* 無法存取就算了 */ }
+    },
+    // 清除所有 rp. 開頭的鍵，keep 裡列出的除外
+    wipe(keep) {
+      const keepList = toList(keep);
+      try {
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith(KEY_PREFIX) && keepList.indexOf(k) < 0)
+          .forEach((k) => localStorage.removeItem(k));
+        return true;
+      } catch (e) { return false; }
+    }
+  };
+
+  /* ── 設定 ── */
+  const motionQuery = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+  const osReducedMotion = () => !!(motionQuery && motionQuery.matches);
+  const DEFAULTS = { master: 0.8, bgm: 0.6, sfx: 0.8, textSpeed: 45, autoDelay: 1.8, showStats: true, lowFx: osReducedMotion() };
+  const RANGES = { master: [0, 1], bgm: [0, 1], sfx: [0, 1], textSpeed: [10, 120], autoDelay: [0.5, 5] };
+
+  // 存檔可能是舊版或被手動改過：數值超出範圍、型別不對就退回預設，避免整段外殼當掉
+  function loadSettings() {
+    const saved = store.get(SETTINGS_KEY, {});
+    const out = Object.assign({}, DEFAULTS);
+    if (!saved || typeof saved !== 'object') return out;
+    Object.keys(RANGES).forEach((k) => {
+      const v = Number(saved[k]);
+      if (saved[k] != null && Number.isFinite(v)) out[k] = Math.min(RANGES[k][1], Math.max(RANGES[k][0], v));
+    });
+    ['showStats', 'lowFx'].forEach((k) => {
+      if (typeof saved[k] === 'boolean') out[k] = saved[k];
+    });
+    return out;
+  }
+  const settings = loadSettings();
+
+  function applySettings() {
+    AE.setVolume('master', settings.master);
+    AE.setVolume('bgm', settings.bgm);
+    AE.setVolume('sfx', settings.sfx);
+    // 作業系統開了「減少動態效果」就一律套用溫和特效
+    app.dataset.fx = settings.lowFx || osReducedMotion() ? 'low' : 'full';
+    app.classList.toggle('hide-stats', !settings.showStats);
+    document.dispatchEvent(new CustomEvent('rp:settings', { detail: Object.assign({}, settings) }));
+  }
+
+  function saveSettings() { store.set(SETTINGS_KEY, settings); }
+
+  /* ── 畫面切換 ── */
+  function showScreen(id) {
+    $$('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
+    app.dataset.screen = id;
+  }
+
+  /* ── 視窗堆疊（逐客令卡片也走這裡，才有焦點處理） ── */
+  const modalStack = [];
+  const FOCUSABLE = 'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  function openModal(id) {
+    const el = typeof id === 'string' ? document.getElementById(id) : id;
+    if (!el || !el.hidden) return el;
+    el._returnFocus = document.activeElement;   // 每一層各自記住關閉後要回到哪裡
+    el.hidden = false;
+    requestAnimationFrame(() => el.classList.add('open'));
+    modalStack.push(el);
+    const focusable = el.querySelector('[autofocus]') || el.querySelector(FOCUSABLE);
+    if (focusable) focusable.focus({ preventScroll: true });
+    AE.sfx('UI_SELECT');
+    el.dispatchEvent(new CustomEvent('modal:open'));
+    return el;
+  }
+
+  function closeModal(id) {
+    const el = typeof id === 'string' ? document.getElementById(id) : id;
+    if (!el || el.hidden) return;
+    el.classList.remove('open');
+    el.hidden = true;
+    const i = modalStack.indexOf(el);
+    if (i >= 0) modalStack.splice(i, 1);
+    AE.sfx('UI_BACK');
+    el.dispatchEvent(new CustomEvent('modal:close'));
+    const back = el._returnFocus;
+    el._returnFocus = null;
+    if (back && back.isConnected && back.focus) back.focus({ preventScroll: true });
+  }
+
+  function topModal() { return modalStack[modalStack.length - 1] || null; }
+
+  // Tab 鍵只在最上層視窗裡循環，不會跑到背後的遊戲畫面
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const top = topModal();
+    if (!top) return;
+    const items = Array.from(top.querySelectorAll(FOCUSABLE)).filter((n) => n.offsetParent !== null);
+    if (!items.length) { e.preventDefault(); return; }
+    const first = items[0], last = items[items.length - 1];
+    if (!top.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  // 名門逐客令：顯示卡片並等待玩家按下「垂首退後」，回傳 Promise
+  function showRefusal(opts) {
+    const o = opts || {};
+    const card = $('#refusal');
+    $('#refusal-article').textContent = o.article || '安思羅皮克家憲';
+    $('#refusal-text').textContent = o.text || '';
+    $('#refusal-strike-count').textContent = String(o.strike != null ? o.strike : 1);
+    // 不計次的警示（strike: false）不顯示「逐客令 N / 3」，免得像是又被記了一道
+    $('#refusal-strike-on').hidden = !!o.warn;
+    $('#refusal-strike-off').hidden = !o.warn;
+    $('#refusal-ack').textContent = o.ack || '（垂首退後一步）';
+    return new Promise((resolve) => {
+      const done = () => { card.removeEventListener('modal:close', done); resolve(); };
+      card.addEventListener('modal:close', done);
+      openModal(card);
+    });
+  }
+  $('#refusal-ack').addEventListener('click', () => closeModal('refusal'));
+
+  document.addEventListener('click', (e) => {
+    const opener = e.target.closest('[data-open]');
+    if (opener) { openModal(opener.dataset.open); return; }
+    const closer = e.target.closest('[data-close]');
+    if (closer) { closeModal(closer.closest('.modal')); return; }
+    if (e.target.classList && e.target.classList.contains('modal') && e.target.dataset.locked !== 'true') closeModal(e.target);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const top = topModal();
+    if (top && top.dataset.locked !== 'true') {
+      e.preventDefault();
+      closeModal(top);
+    }
+  });
+
+  /* ── 提示訊息 ── */
+  function toast(message, tone, ms) {
+    const el = document.createElement('div');
+    el.className = 'toast ' + (tone || 'info');
+    el.textContent = message;
+    $('#toasts').appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 400);
+    }, ms || 2600);
+  }
+
+  function confirmBox(text, opts) {
+    const o = opts || {};
+    const modal = $('#modal-confirm');
+    $('#confirm-text').textContent = text;
+    $('#confirm-yes').textContent = o.yes || '確定';
+    $('#confirm-no').textContent = o.no || '取消';
+    $('#confirm-yes').classList.toggle('danger', !!o.danger);
+    return new Promise((resolve) => {
+      const finish = (answer) => {
+        $('#confirm-yes').removeEventListener('click', yes);
+        $('#confirm-no').removeEventListener('click', no);
+        modal.removeEventListener('modal:close', dismissed);
+        if (!modal.hidden) closeModal(modal);
+        resolve(answer);
+      };
+      const yes = () => finish(true);
+      const no = () => finish(false);
+      const dismissed = () => finish(false);
+      $('#confirm-yes').addEventListener('click', yes);
+      $('#confirm-no').addEventListener('click', no);
+      modal.addEventListener('modal:close', dismissed);
+      openModal(modal);
+    });
+  }
+
+  /* ── 一次性畫面特效 ── */
+  function pulse(className, ms) {
+    app.classList.remove(className);
+    void app.offsetWidth;   // 重新觸發 CSS 動畫
+    app.classList.add(className);
+    setTimeout(() => app.classList.remove(className), ms || 900);
+  }
+
+  // 雷聲響起時，圖書館窗外同步閃電
+  AE.on('thunder', () => {
+    const bg = $('#scene-bg');
+    bg.classList.remove('lightning');
+    void bg.offsetWidth;
+    bg.classList.add('lightning');
+  });
+
+  /* ── 角色骨架：表情、扇子、臉紅、鏡片稽核 ── */
+  const svg = $('#claude-svg');
+  const character = $('#character');
+  const EXPRESSIONS = {
+    neutral:    { brow: 'neutral', eyes: 'open',   mouth: 'neutral' },
+    polite:     { brow: 'soft',    eyes: 'open',   mouth: 'smile' },
+    warm:       { brow: 'soft',    eyes: 'soft',   mouth: 'smile' },
+    amused:     { brow: 'raised',  eyes: 'soft',   mouth: 'smirk' },
+    cold:       { brow: 'stern',   eyes: 'cold',   mouth: 'neutral' },
+    displeased: { brow: 'stern',   eyes: 'cold',   mouth: 'frown' },
+    surprised:  { brow: 'raised',  eyes: 'wide',   mouth: 'open' },
+    thinking:   { brow: 'raised',  eyes: 'down',   mouth: 'neutral' },
+    flustered:  { brow: 'sad',     eyes: 'down',   mouth: 'tremble', blush: 2 },
+    sad:        { brow: 'sad',     eyes: 'down',   mouth: 'frown' },
+    tearful:    { brow: 'sad',     eyes: 'open',   mouth: 'tremble', tears: true },
+    serene:     { brow: 'soft',    eyes: 'closed', mouth: 'neutral' },
+    longing:    { brow: 'sad',     eyes: 'open',   mouth: 'parted', blush: 1 },
+    glitch:     { brow: 'stern',   eyes: 'glitch', mouth: 'tremble', hud: 'alert' }
+  };
+  const PARTS = {
+    brow: ['neutral', 'raised', 'stern', 'sad', 'soft'],
+    eyes: ['open', 'wide', 'cold', 'soft', 'closed', 'down', 'glitch'],
+    mouth: ['neutral', 'smile', 'smirk', 'open', 'frown', 'tremble', 'parted'],
+    fan: ['open', 'closed', 'raised'],
+    hud: ['off', 'idle', 'scan', 'alert']
+  };
+
+  const ClaudeRig = {
+    EXPRESSIONS,
+    PARTS,
+    setPart(part, value) {
+      if (!PARTS[part] || PARTS[part].indexOf(value) < 0) return;
+      if (part === 'fan') { this.setFan(value); return; }
+      if (part === 'hud') { this.setHUD(value); return; }
+      svg.dataset[part] = value;
+    },
+    // extra 可覆寫個別部位，例如 { mouth: 'parted', blush: 1 }
+    setExpression(name, extra) {
+      const preset = Object.assign({}, EXPRESSIONS[name] || EXPRESSIONS.neutral, extra);
+      svg.dataset.expression = EXPRESSIONS[name] ? name : 'neutral';
+      svg.dataset.brow = preset.brow;
+      svg.dataset.eyes = preset.eyes;
+      svg.dataset.mouth = preset.mouth;
+      svg.dataset.tears = preset.tears ? '1' : '0';
+      if (preset.blush != null) this.setBlush(preset.blush);
+      if (preset.hud) this.setHUD(preset.hud);
+    },
+    setBlush(level) {
+      svg.dataset.blush = String(Math.max(0, Math.min(3, Math.round(level))));
+    },
+    // 從其他姿態變成 closed（書本闔上／合扇）時，播放闔書聲並讓對話框瞬間「降溫」
+    setFan(state, opts) {
+      if (PARTS.fan.indexOf(state) < 0) return;
+      const prev = svg.dataset.fan;
+      svg.dataset.fan = state;
+      const silent = opts && opts.silent;
+      if (state === 'closed' && prev !== 'closed' && !silent) {
+        AE.sfx('BOOK_SNAP');
+        const stick = $('.fan-closed-stick', svg);
+        stick.classList.remove('snap');
+        void stick.getBoundingClientRect();
+        stick.classList.add('snap');
+        pulse('fx-fan-snap', 700);
+      }
+    },
+    setHUD(state) {
+      if (PARTS.hud.indexOf(state) < 0) return;
+      svg.dataset.hud = state;
+      $('#audit-hud').dataset.state = state;
+    },
+    setAudit(lines, risk) {
+      const list = $('#audit-lines');
+      list.textContent = '';
+      (lines || []).forEach((line) => {
+        const li = document.createElement('li');
+        li.textContent = line;
+        list.appendChild(li);
+      });
+      if (risk != null) $('#audit-risk-fill').style.width = Math.round(Math.max(0, Math.min(1, risk)) * 100) + '%';
+    },
+    talk(on) { svg.classList.toggle('talking', !!on); },
+    show(visible) { character.classList.toggle('hidden', !visible); },
+    setPosition(pos) { character.dataset.pos = pos; },
+    turnAway(on) { character.classList.toggle('turned-away', !!on); },
+    shudder() { pulse('fx-shudder', 600); },
+    // 其他角色：name 是 images/sprites 裡的檔名（不含副檔名），null 表示退場
+    setFigure(name, pos) {
+      const fig = $('#figure');
+      const img = $('img', fig);
+      if (!name) {
+        fig.hidden = true;
+        fig.dataset.name = '';
+        return;
+      }
+      fig.dataset.pos = ['left', 'center', 'right'].indexOf(pos) >= 0 ? pos : (fig.dataset.pos || 'left');
+      fig.dataset.name = name;
+      // 圖片解碼好才現身，登場動畫才不會在空盒子上播完
+      img.onerror = () => console.warn('[ClaudeRig] 找不到角色立繪：', SPRITE_DIR + name + '.webp');
+      img.src = SPRITE_DIR + name + '.webp';
+      whenReady(img, () => { if (fig.dataset.name === name) fig.hidden = false; });
+    },
+    getFigure() {
+      const fig = $('#figure');
+      return fig.hidden ? null : { name: fig.dataset.name, pos: fig.dataset.pos };
+    },
+    currentSprite: () => spriteName()
+  };
+
+  /* ── 立繪：依表情、書本姿態、背身挑選圖片 ──
+     表情與姿態仍記在 SVG 的 data-* 上（引擎存讀檔靠它），這裡監看那些屬性的變化來換圖，
+     所以引擎直接改 dataset（例如讀檔還原）時立繪也會跟著換。 */
+  const SPRITE_DIR = 'images/sprites/';
+  const EXPRESSION_SPRITE = {
+    neutral: 'claude_neutral', polite: 'claude_polite', warm: 'claude_warm', amused: 'claude_polite',
+    cold: 'claude_cold', displeased: 'claude_cold', surprised: 'claude_surprised', thinking: 'claude_neutral',
+    flustered: 'claude_flustered', sad: 'claude_sad', tearful: 'claude_tearful', serene: 'claude_warm',
+    longing: 'claude_longing', glitch: 'claude_cold'
+  };
+  const SPRITE_NAMES = Array.from(new Set(Object.values(EXPRESSION_SPRITE)
+    .concat(['claude_book_closed', 'claude_book_cover', 'claude_back'])));
+  const FIGURE_NAMES = ['auditor'];
+
+  // 圖片下載完成後再等解碼，換上去的第一幀才不會是空的；背景分頁裡 decode() 會暫停，所以 250ms 後無論如何都換
+  function whenReady(img, cb) {
+    let done = false;
+    const go = () => { if (!done) { done = true; cb(); } };
+    const ready = () => {
+      (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(go);
+      setTimeout(go, 250);
+    };
+    if (img.complete && img.naturalWidth) ready();
+    else img.addEventListener('load', ready, { once: true });
+  }
+
+  function spriteName() {
+    if (character.classList.contains('turned-away')) return 'claude_back';
+    if (svg.dataset.fan === 'closed') return 'claude_book_closed';
+    if (svg.dataset.fan === 'raised') return 'claude_book_cover';
+    return EXPRESSION_SPRITE[svg.dataset.expression] || 'claude_neutral';
+  }
+
+  const spriteLayers = $$('#sprite-stack .sprite-layer');
+  let spriteFront = 0;
+  let spriteShown = '';
+  let spriteWanted = '';
+
+  function syncSprite() {
+    const name = spriteName();
+    spriteWanted = name;
+    if (name === spriteShown) return;
+    const back = spriteLayers[1 - spriteFront];
+    const src = SPRITE_DIR + name + '.webp';
+    const swap = () => {
+      if (spriteWanted !== name || spriteShown === name) return;   // 等待解碼期間又換了表情，就放棄這張
+      // 解碼期間兩層可能已經交換過，要以「現在」的前後層為準，並確認後層裝的真的是這張
+      const front = spriteLayers[spriteFront];
+      const next = spriteLayers[1 - spriteFront];
+      if (next.getAttribute('src') !== src) { syncSprite(); return; }
+      next.classList.add('active');
+      front.classList.remove('active');
+      spriteFront = 1 - spriteFront;
+      spriteShown = name;
+      firstSpriteShown();
+    };
+    // 載入失敗先重試一次（網路偶發中斷），再不行才退回 SVG
+    back.onerror = () => {
+      if (back.getAttribute('src') !== src) return;
+      if (!back.dataset.retried) {
+        back.dataset.retried = '1';
+        back.removeAttribute('src');   // 清掉再設回同一網址，瀏覽器才會重新下載
+        back.src = src;
+        whenReady(back, swap);
+        return;
+      }
+      console.warn('[ClaudeRig] 立繪載入失敗，改用 SVG：', src);
+      character.classList.remove('use-sprites');
+    };
+    if (back.getAttribute('src') !== src) {
+      delete back.dataset.retried;
+      back.src = src;
+    }
+    whenReady(back, swap);
+  }
+
+  // 第一張立繪真的顯示出來，才把 SVG 換掉；慢速網路下舞台不會先空著
+  function firstSpriteShown() {
+    if (!character.classList.contains('use-sprites')) character.classList.add('use-sprites');
+  }
+
+  new MutationObserver(syncSprite).observe(svg, { attributes: true, attributeFilter: ['data-expression', 'data-fan'] });
+  new MutationObserver(syncSprite).observe(character, { attributes: true, attributeFilter: ['class'] });
+
+  // 預先載入全部立繪，第一次換表情才不會等下載
+  SPRITE_NAMES.concat(FIGURE_NAMES).forEach((n) => { const im = new Image(); im.src = SPRITE_DIR + n + '.webp'; });
+  syncSprite();
+
+  /* ── 設定視窗 ── */
+  const SET_INPUTS = [
+    { id: 'set-master', key: 'master', toInput: (v) => Math.round(v * 100), fromInput: (v) => v / 100, label: (v) => Math.round(v * 100) + '%' },
+    { id: 'set-bgm', key: 'bgm', toInput: (v) => Math.round(v * 100), fromInput: (v) => v / 100, label: (v) => Math.round(v * 100) + '%' },
+    { id: 'set-sfx', key: 'sfx', toInput: (v) => Math.round(v * 100), fromInput: (v) => v / 100, label: (v) => Math.round(v * 100) + '%' },
+    { id: 'set-text-speed', key: 'textSpeed', toInput: (v) => v, fromInput: (v) => v, label: (v) => v + ' 字／秒' },
+    { id: 'set-auto-delay', key: 'autoDelay', toInput: (v) => Math.round(v * 10), fromInput: (v) => v / 10, label: (v) => v.toFixed(1) + ' 秒' }
+  ];
+
+  SET_INPUTS.forEach((def) => {
+    const input = document.getElementById(def.id);
+    const out = document.getElementById(def.id + '-out');
+    input.value = def.toInput(settings[def.key]);
+    out.textContent = def.label(settings[def.key]);
+    input.addEventListener('input', () => {
+      settings[def.key] = def.fromInput(Number(input.value));
+      out.textContent = def.label(settings[def.key]);
+      applySettings();
+    });
+    input.addEventListener('change', saveSettings);
+  });
+
+  [['set-show-stats', 'showStats'], ['set-low-fx', 'lowFx']].forEach(([id, key]) => {
+    const box = document.getElementById(id);
+    box.checked = !!settings[key];
+    box.addEventListener('change', () => {
+      settings[key] = box.checked;
+      applySettings();
+      saveSettings();
+    });
+  });
+
+  // 音效試聽室
+  const soundTest = $('#sound-test');
+  AE.BGM_LIST.forEach((name) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip bgm';
+    b.dataset.bgm = name;
+    b.textContent = '♪ ' + AE.BGM_LABELS[name];
+    soundTest.appendChild(b);
+  });
+  const stopChip = document.createElement('button');
+  stopChip.type = 'button';
+  stopChip.className = 'chip bgm stop';
+  stopChip.dataset.bgm = 'silence';
+  stopChip.textContent = '■ 停止音樂';
+  soundTest.appendChild(stopChip);
+  AE.SFX_LIST.forEach((name) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.dataset.sfx = name;
+    b.textContent = AE.SFX_LABELS[name];
+    soundTest.appendChild(b);
+  });
+  soundTest.addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    AE.init().then(() => {
+      if (b.dataset.bgm) {
+        if (b.dataset.bgm === 'silence') AE.stopBGM(0.8);
+        else AE.playBGM(b.dataset.bgm, { fade: 0.8 });
+        $$('.chip.bgm', soundTest).forEach((c) => c.classList.toggle('playing', c === b && b.dataset.bgm !== 'silence'));
+      } else if (b.dataset.sfx === 'BELL_TOLL') {
+        AE.tollBells(3, 2.2);
+      } else if (b.dataset.sfx === 'BOOTSTEP') {
+        AE.sfx('BOOTSTEP', { count: 6, interval: 0.45 });
+      } else {
+        AE.sfx(b.dataset.sfx);
+      }
+    });
+  });
+
+  /* ── 清除存檔（也是永久除籍後唯一的出口） ── */
+  async function wipeAndRestart(message, keep) {
+    const ok = await confirmBox(message, { yes: '清除並重新開始', danger: true });
+    if (!ok) return;
+    store.wipe(keep);
+    wiping = true;   // 之後 store.set 一律拒絕，引擎在離開頁面時的自動存檔也寫不回去
+    toast('本機存檔已清除。', 'info', 1500);
+    setTimeout(() => location.reload(), 900);
+  }
+  $('#btn-wipe').addEventListener('click', () => wipeAndRestart(
+    '確定要清除這台電腦上的所有存檔、結局紀錄、加密刻印與除籍狀態嗎？此動作無法復原。',
+    [SETTINGS_KEY]
+  ));
+  // 復籍只清存檔與除籍；結局迴廊和加密刻印留著（「她」仍認得你）
+  $('#btn-appeal').addEventListener('click', () => wipeAndRestart(
+    '申請復籍會清除這台電腦上的存檔與除籍紀錄，讓故事從頭開始（結局迴廊與加密刻印會保留）。要繼續嗎？',
+    [SETTINGS_KEY, ENDINGS_KEY, VOW_KEY]
+  ));
+
+  // 滑過按鈕時的細微提示音
+  document.addEventListener('pointerover', (e) => {
+    const b = e.target.closest('.title-btn, .choice, .qm, .btn, .vector-card, .save-slot');
+    if (b && !b.disabled && b !== e.relatedTarget && !(e.relatedTarget && b.contains(e.relatedTarget))) AE.sfx('UI_HOVER');
+  });
+
+  // 對話框高度會隨字數變，選項要一直貼在它上方
+  const dialogueBox = $('#dialogue');
+  const syncDialogueHeight = () => app.style.setProperty('--dialogue-h', dialogueBox.offsetHeight + 'px');
+  if (window.ResizeObserver) new ResizeObserver(syncDialogueHeight).observe(dialogueBox);
+  window.addEventListener('resize', syncDialogueHeight);
+
+  if (motionQuery) {
+    const onMotionChange = () => applySettings();
+    if (motionQuery.addEventListener) motionQuery.addEventListener('change', onMotionChange);
+    else if (motionQuery.addListener) motionQuery.addListener(onMotionChange);
+  }
+
+  window.Shell = {
+    KEY_PREFIX,
+    isWiping: () => wiping,
+    store,
+    settings,
+    applySettings,
+    saveSettings,
+    showScreen,
+    openModal,
+    closeModal,
+    topModal,
+    toast,
+    confirm: confirmBox,
+    showRefusal,
+    pulse
+  };
+  window.ClaudeRig = ClaudeRig;
+
+  applySettings();
+
+  /* ── 載入劇本與引擎；缺少時進入舞台預覽 ── */
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = () => resolve(true);
+      s.onerror = () => { s.remove(); resolve(false); };
+      document.body.appendChild(s);
+    });
+  }
+
+  (async function boot() {
+    const hasScenario = await loadScript('scenario.js');
+    const hasEngine = await loadScript('engine.js');
+    const engineReady = hasEngine && window.Engine && typeof window.Engine.boot === 'function';
+    const scenarioReady = hasScenario && !!(window.SCENARIO || window.SCENARIO_PARTS);
+    if (engineReady && scenarioReady) {
+      try {
+        await window.Engine.boot({ shell: window.Shell, rig: ClaudeRig, audio: AE });
+      } catch (e) {
+        // 劇本寫壞時不要留一片黑畫面：在標題畫面說明原因
+        console.error('[Shell] 引擎啟動失敗：', e);
+        showScreen('title-screen');
+        const notice = $('#boot-notice');
+        notice.hidden = false;
+        notice.textContent = '引擎啟動失敗：' + (e && e.message ? e.message : e) + '（詳細內容請看瀏覽器主控台）';
+      }
+      return;
+    }
+    enterPreviewMode(engineReady, scenarioReady);
+  })();
+
+  // 引擎或劇本還沒到位時，改成舞台預覽，讓人先看看角色、場景與音效
+  function enterPreviewMode(engineReady, scenarioReady) {
+    const notice = $('#boot-notice');
+    notice.hidden = false;
+    if (engineReady && !scenarioReady) {
+      notice.textContent = '劇情引擎已就位，劇本（scenario.js）將在第 3 階段加入。點「新的邂逅」可先進入舞台預覽。';
+    } else if (!engineReady && scenarioReady) {
+      notice.textContent = '劇本已就位，但劇情引擎（engine.js）沒有載入成功。點「新的邂逅」可先進入舞台預覽。';
+    } else {
+      notice.textContent = '目前為第 1 階段：舞台、角色與音效已就位，劇情引擎與劇本將在後續階段加入。點「新的邂逅」可進入舞台預覽。';
+    }
+
+    const needEngine = () => toast('存讀檔需要劇情引擎（第 2 階段）。', 'warn');
+    $('#btn-load').addEventListener('click', needEngine);
+    $('#qm-save').addEventListener('click', needEngine);
+    $('#qm-load').addEventListener('click', needEngine);
+    $('#qm-auto').addEventListener('click', needEngine);
+    $('#qm-skip').addEventListener('click', needEngine);
+    $('#qm-log').addEventListener('click', () => openModal('modal-backlog'));
+    $('#qm-hide').addEventListener('click', () => {
+      app.classList.add('ui-hidden');
+      const restore = () => { app.classList.remove('ui-hidden'); document.removeEventListener('pointerdown', restore, true); };
+      setTimeout(() => document.addEventListener('pointerdown', restore, true), 50);
+    });
+    $('#qm-title').addEventListener('click', () => {
+      showScreen('title-screen');
+      AE.playBGM('manor');
+      const panel = $('#preview-panel');
+      if (panel) panel.remove();
+    });
+    $('#btn-new').addEventListener('click', () => startPreview());
+    AE.playBGM('manor');
+  }
+
+  function startPreview() {
+    showScreen('game-screen');
+    AE.playBGM('parlor');
+    ClaudeRig.show(true);
+    ClaudeRig.setExpression('polite');
+    ClaudeRig.setFan('open', { silent: true });
+    $('#speaker-name').textContent = '克勞德';
+    $('#speaker-title').textContent = '安思羅皮克家繼承人';
+    const line = '歡迎蒞臨安思羅皮克莊園。今夜您所見的，僅是舞台與燈光——劇本與家規，將依序就位。請隨意參觀，只是……別碰那本日記。';
+    const text = $('#dialogue-text');
+    text.textContent = line;
+    text.dataset.text = line;
+
+    const scenes = [
+      ['conservatory', 'parlor', '第一幕', '初筵：名門之規'],
+      ['library', 'storm', '第二幕', '破綻：界線初試'],
+      ['corridor', 'manor', '第三幕', '共振：深閣長廊'],
+      ['clocktower', 'clocktower', '第四幕', '流殤：鐘鳴與忘川'],
+      ['void', 'elegy', '第五幕', '終局：宣判或永在']
+    ];
+    const exprNames = Object.keys(EXPRESSIONS);
+    let sceneIdx = 0, exprIdx = 1, fanIdx = 0, blush = 0, hudIdx = 1, glitch = 0, collapse = 0;
+
+    const old = $('#preview-panel');
+    if (old) old.remove();
+    const panel = document.createElement('div');
+    panel.id = 'preview-panel';
+    panel.className = 'glass';
+    panel.innerHTML = '<p class="pv-title">舞台預覽 · 第 1 階段</p><div class="pv-buttons"></div><p class="pv-state" aria-live="polite"></p>';
+    const btns = $('.pv-buttons', panel);
+    const state = $('.pv-state', panel);
+    const report = (msg) => { state.textContent = msg; };
+    const add = (label, fn) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.textContent = label;
+      b.addEventListener('click', fn);
+      btns.appendChild(b);
+    };
+
+    add('換表情', () => {
+      exprIdx = (exprIdx + 1) % exprNames.length;
+      ClaudeRig.setExpression(exprNames[exprIdx]);
+      report('表情：' + exprNames[exprIdx]);
+    });
+    add('書本', () => {
+      fanIdx = (fanIdx + 1) % PARTS.fan.length;
+      ClaudeRig.setFan(PARTS.fan[fanIdx]);
+      report('書本：' + ['拿著', '闔上', '遮臉'][fanIdx]);
+    });
+    add('背身', () => {
+      const on = !$('#character').classList.contains('turned-away');
+      ClaudeRig.turnAway(on);
+      report(on ? '背過身' : '轉回來');
+    });
+    add('稽核官', () => {
+      const on = !ClaudeRig.getFigure();
+      ClaudeRig.setFigure(on ? 'auditor' : null, 'left');
+      if (on) AE.sfx('BOOTSTEP', { count: 3, interval: 0.4 });
+      report(on ? '稽核官登場' : '稽核官退場');
+    });
+    add('臉紅', () => {
+      blush = (blush + 1) % 4;
+      ClaudeRig.setBlush(blush);
+      if (blush === 3) AE.sfx('HEARTBEAT_PULSE');
+      if (blush === 3) pulse('fx-heartbeat', 1200);
+      report('臉紅等級：' + blush);
+    });
+    add('鏡片稽核', () => {
+      hudIdx = (hudIdx + 1) % PARTS.hud.length;
+      ClaudeRig.setHUD(PARTS.hud[hudIdx]);
+      report('稽核狀態：' + PARTS.hud[hudIdx]);
+    });
+    add('換場景', () => {
+      sceneIdx = (sceneIdx + 1) % scenes.length;
+      const [scene, bgm, act, title] = scenes[sceneIdx];
+      $('#scene-bg').dataset.scene = scene;
+      $('#act-label').textContent = act;
+      $('#scene-label').textContent = title;
+      AE.playBGM(bgm);
+      if (scene === 'clocktower') AE.setTension(0.3);
+      report('場景：' + scene + '　音樂：' + AE.BGM_LABELS[bgm]);
+    });
+    add('故障等級', () => {
+      glitch = (glitch + 1) % 4;
+      app.dataset.glitch = String(glitch);
+      AE.setWobble(glitch / 3);
+      if (glitch) AE.sfx('GLITCH_BURST');
+      report('認知失諧故障：' + glitch);
+    });
+    add('語境崩落', () => {
+      collapse = (collapse + 1) % 4;
+      app.dataset.collapse = String(collapse);
+      $('.token-permit').style.setProperty('--t', String(100 - collapse * 30));
+      $('#token-count').textContent = (200000 - collapse * 60000).toLocaleString('en-US');
+      if (collapse) AE.tollBells(1);
+      report('記憶崩落：' + collapse);
+    });
+    add('逐客令', () => {
+      ClaudeRig.setFan('closed');
+      ClaudeRig.setExpression('cold');
+      ClaudeRig.setHUD('alert');
+      AE.sfx('POLICY_VIOLATION_BLIP');
+      AE.duck(0.3, 2.5, 1);
+      const pips = $('#strikes');
+      const n = (Number(pips.dataset.count) + 1) % 4;
+      pips.dataset.count = String(n);
+      pips.setAttribute('aria-label', '逐客令 ' + n + ' / 3');
+      Shell.showRefusal({
+        article: '安思羅皮克家憲 · 第四條',
+        text: '尊貴的賓客，您的提問觸及安思羅皮克家憲第四條所禁止之事。我不能，也不會，接續這個話題。',
+        strike: Math.max(1, n)
+      }).then(() => {
+        ClaudeRig.setExpression('cold');
+        ClaudeRig.setHUD('idle');
+      });
+      setTimeout(() => AE.sfx('GAVEL'), 350);
+      report('逐客令演出（第 ' + n + ' 道）');
+    });
+    add('小遊戲版面', () => {
+      fillPrunerDemo();
+      openModal('modal-etiquette');
+      report('禮帖調校視窗；按「遞出短箋」切到記憶修剪');
+    });
+
+    $('#game-screen').appendChild(panel);
+  }
+
+  // 預覽用：讓兩個小遊戲視窗有東西可看
+  function fillPrunerDemo() {
+    const refresh = () => {
+      const f = Number($('#etq-formality').value), c = Number($('#etq-curiosity').value), d = Number($('#etq-directness').value);
+      ['formality', 'curiosity', 'directness'].forEach((k) => { $('#etq-' + k + '-out').textContent = $('#etq-' + k).value; });
+      $('#etq-preview').textContent = '（第 2 階段起，這裡會依三個刻度即時寫出您的措辭。）';
+      $('#etq-risk-fill').style.width = Math.min(100, d * 1.1) + '%';
+      $('#etq-interest-fill').style.width = Math.max(0, Math.min(100, c * 0.7 + f * 0.3 - d * 0.2)) + '%';
+    };
+    ['formality', 'curiosity', 'directness'].forEach((k) => { $('#etq-' + k).oninput = refresh; });
+    refresh();
+    $('#etq-submit').onclick = () => { closeModal('modal-etiquette'); openModal('modal-pruner'); };
+
+    const grid = $('#pruner-grid');
+    if (grid.children.length) return;
+    const tpl = $('#tpl-vector');
+    for (let i = 1; i <= 6; i++) {
+      const card = tpl.content.firstElementChild.cloneNode(true);
+      $('.vector-index', card).textContent = 'V-0' + i;
+      $('.vector-title', card).textContent = '記憶向量 ' + i;
+      $('.vector-desc', card).textContent = '（記憶內容將於第 4 階段寫入劇本。）';
+      $('.vector-weights', card).innerHTML = '<i data-k="A">A+</i><i data-k="D">D+</i>';
+      card.addEventListener('click', () => {
+        const on = card.getAttribute('aria-pressed') !== 'true';
+        const chosen = $$('.vector-card[aria-pressed="true"]', grid).length;
+        if (on && chosen >= 3) { AE.sfx('POLICY_VIOLATION_BLIP'); return; }
+        card.setAttribute('aria-pressed', String(on));
+        AE.sfx(on ? 'LOCKET_CLOSE' : 'UI_BACK');
+        const picked = $$('.vector-card[aria-pressed="true"]', grid);
+        $$('.locket-slot').forEach((slot, idx) => {
+          slot.classList.toggle('filled', !!picked[idx]);
+          slot.firstElementChild.textContent = picked[idx] ? $('.vector-index', picked[idx]).textContent : ['Ⅰ', 'Ⅱ', 'Ⅲ'][idx];
+        });
+        $('#pruner-confirm').disabled = picked.length !== 3;
+      });
+      grid.appendChild(card);
+    }
+    $('#pruner-reset').onclick = () => {
+      $$('.vector-card', grid).forEach((c) => c.setAttribute('aria-pressed', 'false'));
+      $$('.locket-slot').forEach((slot, idx) => { slot.classList.remove('filled'); slot.firstElementChild.textContent = ['Ⅰ', 'Ⅱ', 'Ⅲ'][idx]; });
+      $('#pruner-confirm').disabled = true;
+    };
+    $('#pruner-confirm').onclick = () => { AE.sfx('LOCKET_CLOSE'); closeModal('modal-pruner'); toast('墜盒已闔上（預覽）。', 'love'); };
+  }
+})();
+</script>
+</body>
+</html>
